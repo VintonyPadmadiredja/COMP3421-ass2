@@ -98,7 +98,19 @@ public class Terrain {
         float altitude = 0;
 
         // TODO: Implement this
-        
+        int lowerBoundX = (int) Math.floor(x);
+        int upperBoundX = (int) Math.ceil(x);
+        int lowerBoundZ = (int) Math.floor(z);
+        int upperBoundZ = (int) Math.ceil(z);
+
+        // bilinear interpolation
+        double p1_altitude = getGridAltitude(lowerBoundX, lowerBoundZ);
+//        System.out.println(p1_altitude);
+        double p2_altitude = getGridAltitude(upperBoundX, upperBoundZ);
+//        System.out.println(p2_altitude);
+
+        altitude = (float) ((z - lowerBoundZ)*p2_altitude) + (float) ((upperBoundZ - z)*p1_altitude);
+        System.out.println(altitude);
         return altitude;
     }
 
@@ -125,6 +137,14 @@ public class Terrain {
     public void addRoad(float width, List<Point2D> spine) {
         Road road = new Road(width, spine);
         roads.add(road);        
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 
 }
