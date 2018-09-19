@@ -56,7 +56,11 @@ public class World extends Application3D implements MouseListener {
 	public void display(GL3 gl) {
 		super.display(gl);
 
-        CoordFrame3D frame = CoordFrame3D.identity().translate(-2, 0, -8).scale(0.5f,0.5f,0.5f)
+		//camera
+        CoordFrame3D view = CoordFrame3D.identity().translate(0, -0.5f, 0f);
+        Shader.setViewMatrix(gl, view.getMatrix());
+
+        CoordFrame3D frame = CoordFrame3D.identity().translate(-2, 0, -8)
                 .rotateX(rotateX).rotateY(rotateY);
         Shader.setPenColor(gl, Color.GRAY);
         for (TriangleMesh mesh : meshes)
@@ -75,8 +79,8 @@ public class World extends Application3D implements MouseListener {
 		super.init(gl);
         getWindow().addMouseListener(this);
 
-        Shader shader = new Shader(gl, "shaders/vertex_phong.glsl",
-                "shaders/fragment_phong.glsl");
+        Shader shader = new Shader(gl, "shaders/vertex_flat.glsl",
+                "shaders/fragment_flat.glsl");
         shader.use(gl);
 
         // Set the lighting properties
@@ -103,27 +107,48 @@ public class World extends Application3D implements MouseListener {
         for (int z = 0; z < terrain.getDepth() - 1; z++) {
             List<Point3D> points = new ArrayList<>();
             List<Integer> indices = new ArrayList<>();
-            for (int x = 0; x < terrain.getWidth(); x++) {
-                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z + 1), z + 1));
+            for (int x = 0; x < terrain.getWidth() - 1; x++) {
+//                Point3D p0 = new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z);
+//                Point3D p1 = new Point3D(x, (float) terrain.getGridAltitude(x, z), z);
+//                Point3D p2 = new Point3D(x, (float) terrain.getGridAltitude(x, z + 1), z + 1);
+//                Point3D p3 = new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1);
+
+//                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z + 1), z + 1));
 //                Point3D newPoint = new Point3D(x, (float) terrain.getGridAltitude(x, z+1), z+1);
 //                System.out.println(newPoint.getX() + " " + newPoint.getY() + " " + newPoint.getZ());
-
-                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z), z));
+//
+//                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z), z));
 //                newPoint = new Point3D(x, (float) terrain.getGridAltitude(x, z), z);
 //                System.out.println(newPoint.getX() + " " + newPoint.getY() + " " + newPoint.getZ());
-//                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z));
 //                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1));
+//                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z));
 
-                //Indices
-                int j = (x + 1) % terrain.getWidth();
-                indices.add(2*x);
-                indices.add(2*j + 1);
-                indices.add(2*x + 1);
+                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z));
+                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z), z));
+                points.add(new Point3D(x, (float) terrain.getGridAltitude(x , z + 1), z + 1));
+                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1));
 
-                indices.add(2*x);
-                indices.add(2*j);
-                indices.add(2*j + 1);
+                // determine which diagonal to take
+                if (Math.abs(terrain.getGridAltitude(x + 1, z) - terrain.getGridAltitude(x, z + 1)) >
+                        Math.abs(terrain.getGridAltitude(x + 1, z + 1) - terrain.getGridAltitude(x, z))) {
+                    System.out.println("greater");
+                    indices.add(4*x);
+                    indices.add(4*x + 1);
+                    indices.add(4*x + 2);
 
+                    indices.add(4*x);
+                    indices.add(4*x + 2);
+                    indices.add(4*x + 3);
+                } else {
+                    System.out.println("less");
+                    indices.add(4*x + 3);
+                    indices.add(4*x);
+                    indices.add(4*x + 1);
+
+                    indices.add(4*x + 3);
+                    indices.add(4*x + 1);
+                    indices.add(4*x + 2);
+                }
 
             }
             TriangleMesh segment = new TriangleMesh(points, indices, true);
