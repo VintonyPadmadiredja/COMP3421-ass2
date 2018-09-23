@@ -60,7 +60,7 @@ public class World extends Application3D implements MouseListener {
         CoordFrame3D view = CoordFrame3D.identity().translate(0, -0.5f, 0f);
         Shader.setViewMatrix(gl, view.getMatrix());
 
-        CoordFrame3D frame = CoordFrame3D.identity().translate(-2, 0, -8)
+        CoordFrame3D frame = CoordFrame3D.identity().translate(-2, 0, -8).scale(0.5f, 0.5f, 0.5f)
                 .rotateX(rotateX).rotateY(rotateY);
         Shader.setPenColor(gl, Color.GRAY);
         for (TriangleMesh mesh : meshes)
@@ -108,20 +108,15 @@ public class World extends Application3D implements MouseListener {
             List<Point3D> points = new ArrayList<>();
             List<Integer> indices = new ArrayList<>();
             for (int x = 0; x < terrain.getWidth() - 1; x++) {
-//                Point3D p0 = new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z);
-//                Point3D p1 = new Point3D(x, (float) terrain.getGridAltitude(x, z), z);
-//                Point3D p2 = new Point3D(x, (float) terrain.getGridAltitude(x, z + 1), z + 1);
-//                Point3D p3 = new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1);
 
-//                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z + 1), z + 1));
-//                Point3D newPoint = new Point3D(x, (float) terrain.getGridAltitude(x, z+1), z+1);
-//                System.out.println(newPoint.getX() + " " + newPoint.getY() + " " + newPoint.getZ());
-//
-//                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z), z));
-//                newPoint = new Point3D(x, (float) terrain.getGridAltitude(x, z), z);
-//                System.out.println(newPoint.getX() + " " + newPoint.getY() + " " + newPoint.getZ());
-//                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1));
-//                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z));
+                //      p1      p0
+                //        ------
+                //        |   /|
+                //        |  / |
+                //        | /  |
+                //        |/   |
+                //        ------
+                //      p2      p3
 
                 points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z));
                 points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z), z));
@@ -129,9 +124,9 @@ public class World extends Application3D implements MouseListener {
                 points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1));
 
                 // determine which diagonal to take
-                if (Math.abs(terrain.getGridAltitude(x + 1, z) - terrain.getGridAltitude(x, z + 1)) >
+                // abs(alt(p2) - alt(p0)) > abs(alt(p1) - alt(p3))
+                if (Math.abs(terrain.getGridAltitude(x, z + 1) - terrain.getGridAltitude(x + 1, z)) >
                         Math.abs(terrain.getGridAltitude(x + 1, z + 1) - terrain.getGridAltitude(x, z))) {
-                    System.out.println("greater");
                     indices.add(4*x);
                     indices.add(4*x + 1);
                     indices.add(4*x + 2);
@@ -140,7 +135,6 @@ public class World extends Application3D implements MouseListener {
                     indices.add(4*x + 2);
                     indices.add(4*x + 3);
                 } else {
-                    System.out.println("less");
                     indices.add(4*x + 3);
                     indices.add(4*x);
                     indices.add(4*x + 1);
