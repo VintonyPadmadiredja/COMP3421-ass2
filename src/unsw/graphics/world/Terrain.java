@@ -107,9 +107,13 @@ public class Terrain {
         int upperBoundZ = (int) Math.ceil(z);
 
         Point3D p0 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
+//        System.out.format("p0 = %d, %d, %d", upperBoundX, (int)getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p1 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
+//        System.out.format("p1 = %d, %d, %d", lowerBoundX, (int)getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p2 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
+//        System.out.format("p2 = %d, %d, %d", lowerBoundX, (int)getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
         Point3D p3 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
+//        System.out.format("p3 = %d, %d, %d", upperBoundX, (int)getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
 
         // test point is above or below a line
         // p1      p0
@@ -120,13 +124,15 @@ public class Terrain {
         // |/   |
         // ------
         // p2      p3
+        // Z increases down, so this slope is decreasing
         // m = 1/-1 = -1
-        // f = 2h(x − x0)− 2w(y − y0) //h == w == 1
+        // f = 2h(x − x0) + 2w(z − z0) //h == w == 1
         // < 0 below the line
         // > 0 above the line
         // == 0 on the line
 
-        float f_value = 2*(x - p0.getX()) - 2 * (z - p0.getZ());
+        float f_value = 2*(x - p0.getX()) + 2 * (z - p0.getZ());
+//        System.out.println(f_value);
         if (f_value < 0) {
             altitude = (float) bilinearInterpolate(x, z, p2, p0, p3);
         } else if (f_value > 0) {
@@ -146,6 +152,7 @@ public class Terrain {
      * @param z
      */
     public void addTree(float x, float z) {
+        System.out.println("x = " + x + " z = " + z);
         float y = altitude(x, z);
         Tree tree = new Tree(x, y, z);
         trees.add(tree);
