@@ -5,9 +5,12 @@ package unsw.graphics.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
+import unsw.graphics.geometry.TriangleMesh;
 
 
 /**
@@ -23,6 +26,7 @@ public class Terrain {
     private List<Tree> trees;
     private List<Road> roads;
     private Vector3 sunlight;
+    private List<TriangleMesh> terrainMeshes =  new ArrayList<>();
     /**
      * Create a new terrain
      *
@@ -159,14 +163,6 @@ public class Terrain {
         roads.add(road);        
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
     // p = point within triangle, p1 = left end, p2 = common point, p3 = right end
     private double bilinearInterpolate(float x, float z, Point3D p1, Point3D p2, Point3D p3) {
         // linear interpolation of z for both lines, p1-p2 and p3-p2
@@ -199,5 +195,67 @@ public class Terrain {
 
     private float getXFromLine(float z, float x1, float z1, float x2, float z2) {
         return ((z - z1)/((z2 - z1)/(x2 - x1)) + x1);
+    }
+
+    public void makeTerrain(GL3 gl) {
+        for (int z = 0; z < depth - 1; z++) {
+            List<Point3D> points = new ArrayList<>();
+            List<Integer> indices = new ArrayList<>();
+            for (int x = 0; x < width - 1; x++) {
+
+                //      p1      p0
+                //        ------
+                //        |   /|
+                //        |  / |
+                //        | /  |
+                //        |/   |
+                //        ------
+                //      p2      p3
+
+                points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z));
+                points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
+                points.add(new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1));
+                points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1));
+
+                // indices.add(4*x);
+                // indices.add(4*x + 1);
+                // indices.add(4*x + 2);
+
+                // indices.add(4*x);
+                // indices.add(4*x + 2);
+                // indices.add(4*x + 3);
+
+                // NOTE*: Have to comment above and uncomment below to make it display like example
+                // determine which diagonal to take
+                // abs(alt(p2) - alt(p0)) > abs(alt(p1) - alt(p3))
+                if (Math.abs(getGridAltitude(x, z + 1) - getGridAltitude(x + 1, z)) >
+                        Math.abs(getGridAltitude(x + 1, z + 1) - getGridAltitude(x, z))) {
+                    indices.add(4 * x);
+                    indices.add(4 * x + 1);
+                    indices.add(4 * x + 2);
+
+                    indices.add(4 * x);
+                    indices.add(4 * x + 2);
+                    indices.add(4 * x + 3);
+                } else {
+                    indices.add(4 * x + 3);
+                    indices.add(4 * x);
+                    indices.add(4 * x + 1);
+
+                    indices.add(4 * x + 3);
+                    indices.add(4 * x + 1);
+                    indices.add(4 * x + 2);
+                }
+
+            }
+            TriangleMesh segment = new TriangleMesh(points, indices, true);
+            segment.init(gl);
+            terrainMeshes.add(segment);
+        }
+    }
+
+    public void drawTerrain(GL3 gl, CoordFrame3D frame) {
+        for (TriangleMesh mesh : terrainMeshes)
+            mesh.draw(gl, frame);
     }
 }

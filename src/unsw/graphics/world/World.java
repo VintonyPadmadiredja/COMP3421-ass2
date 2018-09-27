@@ -27,7 +27,6 @@ import unsw.graphics.geometry.TriangleMesh;
 public class World extends Application3D implements MouseListener {
 
     private Terrain terrain;
-	private List<TriangleMesh> meshes =  new ArrayList<>();
     private float rotateX = 0;
     private float rotateY = 0;
     private Point2D myMousePoint = null;
@@ -63,8 +62,8 @@ public class World extends Application3D implements MouseListener {
         CoordFrame3D frame = CoordFrame3D.identity().translate(-2, 0, -8)//.scale(0.5f, 0.5f, 0.5f)
                 .rotateX(rotateX).rotateY(rotateY);
         Shader.setPenColor(gl, Color.GRAY);
-        for (TriangleMesh mesh : meshes)
-            mesh.draw(gl, frame);
+
+        terrain.drawTerrain(gl, frame);
 
 	}
 
@@ -94,7 +93,7 @@ public class World extends Application3D implements MouseListener {
         Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
         Shader.setFloat(gl, "phongExp", 16f);
 
-        makeTerrain(gl);
+        terrain.makeTerrain(gl);
     }
 
 	@Override
@@ -103,62 +102,6 @@ public class World extends Application3D implements MouseListener {
         Shader.setProjMatrix(gl, Matrix4.perspective(60, width/(float)height, 1, 100));
 	}
 
-    private void makeTerrain(GL3 gl) {
-        for (int z = 0; z < terrain.getDepth() - 1; z++) {
-            List<Point3D> points = new ArrayList<>();
-            List<Integer> indices = new ArrayList<>();
-            for (int x = 0; x < terrain.getWidth() - 1; x++) {
-
-                //      p1      p0
-                //        ------
-                //        |   /|
-                //        |  / |
-                //        | /  |
-                //        |/   |
-                //        ------
-                //      p2      p3
-
-                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z), z));
-                points.add(new Point3D(x, (float) terrain.getGridAltitude(x, z), z));
-                points.add(new Point3D(x, (float) terrain.getGridAltitude(x , z + 1), z + 1));
-                points.add(new Point3D(x + 1, (float) terrain.getGridAltitude(x + 1, z + 1), z + 1));
-
-//                indices.add(4*x);
-//                indices.add(4*x + 1);
-//                indices.add(4*x + 2);
-//
-//                indices.add(4*x);
-//                indices.add(4*x + 2);
-//                indices.add(4*x + 3);
-                
-                // NOTE*: Have to comment above and uncomment below to make it display like example
-                // determine which diagonal to take
-                // abs(alt(p2) - alt(p0)) > abs(alt(p1) - alt(p3))
-                if (Math.abs(terrain.getGridAltitude(x, z + 1) - terrain.getGridAltitude(x + 1, z)) >
-                        Math.abs(terrain.getGridAltitude(x + 1, z + 1) - terrain.getGridAltitude(x, z))) {
-                    indices.add(4*x);
-                    indices.add(4*x + 1);
-                    indices.add(4*x + 2);
-
-                    indices.add(4*x);
-                    indices.add(4*x + 2);
-                    indices.add(4*x + 3);
-                } else {
-                    indices.add(4*x + 3);
-                    indices.add(4*x);
-                    indices.add(4*x + 1);
-
-                    indices.add(4*x + 3);
-                    indices.add(4*x + 1);
-                    indices.add(4*x + 2);
-                }
-
-            }
-            TriangleMesh segment = new TriangleMesh(points, indices, true);
-            segment.init(gl);
-            meshes.add(segment);
-        }
-    }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
