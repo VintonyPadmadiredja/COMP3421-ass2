@@ -134,7 +134,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
                     cameraY = terrain.altitude(cameraX, cameraZ) + 1.5f;
 //                    System.out.println(cameraY);
                 } else {
-                    cameraY = 1;
+                    cameraY = 1.5f;
                 }
                 break;
             case KeyEvent.VK_LEFT:
