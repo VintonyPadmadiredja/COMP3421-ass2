@@ -388,7 +388,7 @@ public class TriangleMesh {
         }
         Shader.setModelMatrix(gl, frame.getMatrix());
         // uncomment this to view as lines
-        // gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL3.GL_LINE);
+//         gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL3.GL_LINE);
         if (indices != null) {
             gl.glDrawElements(GL3.GL_TRIANGLES, indices.capacity(),
                     GL.GL_UNSIGNED_INT, 0);
