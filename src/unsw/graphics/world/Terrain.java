@@ -2,12 +2,16 @@ package unsw.graphics.world;
 
 
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 import unsw.graphics.CoordFrame3D;
+import unsw.graphics.Shader;
+import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
@@ -30,6 +34,7 @@ public class Terrain {
     private Vector3 sunlight;
     private List<TriangleMesh> terrainMeshes =  new ArrayList<>();
     private List<TriangleMesh> treeMeshes =  new ArrayList<>();
+    private Texture treeTexture;
 
     /**
      * Create a new terrain
@@ -271,6 +276,12 @@ public class Terrain {
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
         for (TriangleMesh mesh : terrainMeshes)
             mesh.draw(gl, frame);
+
+        // Load tree texture
+//        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", false);
+//        Shader.setInt(gl, "tex", 1);
+//        gl.glActiveTexture(GL.GL_TEXTURE1);
+//        gl.glBindTexture(GL.GL_TEXTURE_2D, treeTexture.getId());
 
         // Load tree.ply model and draw trees
         try {

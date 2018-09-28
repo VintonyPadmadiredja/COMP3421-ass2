@@ -10,12 +10,10 @@ import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
-import unsw.graphics.Application3D;
-import unsw.graphics.CoordFrame3D;
-import unsw.graphics.Matrix4;
-import unsw.graphics.Shader;
+import unsw.graphics.*;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
@@ -36,6 +34,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
     private float rotateY = 0;
     private Point2D myMousePoint = null;
     private static final int ROTATION_SCALE = 1;
+    private Texture terrainTexture;
 
 
     public World(Terrain terrain) {
@@ -100,6 +99,12 @@ public class World extends Application3D implements KeyListener, MouseListener {
         Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
         Shader.setFloat(gl, "phongExp", 16f);
 
+        Shader terrainShader = new Shader(gl, "shaders/vertex_tex_3d.glsl", "shaders/fragment_tex_3d.glsl");
+        terrainShader.use(gl);
+        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
+        Shader.setInt(gl, "tex", 0);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
         terrain.makeTerrain(gl);
     }
 
