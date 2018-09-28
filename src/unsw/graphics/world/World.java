@@ -28,7 +28,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
     private Terrain terrain;
     private float cameraX = 0;
-    private float cameraY = 0;
+    private float cameraY = 1;
     private float cameraZ = 0;
     private float rotateX = 0;
     private float rotateY = 0;
@@ -60,11 +60,11 @@ public class World extends Application3D implements KeyListener, MouseListener {
 		super.display(gl);
 
 		//camera
-        CoordFrame3D view = CoordFrame3D.identity().translate(-cameraX, cameraY, cameraZ);
+        CoordFrame3D view = CoordFrame3D.identity().translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
 
-        CoordFrame3D frame = CoordFrame3D.identity().rotateY(90)
+        CoordFrame3D frame = CoordFrame3D.identity()
             .rotateX(rotateX).rotateY(rotateY);
         Shader.setPenColor(gl, Color.GRAY);
 
@@ -120,15 +120,21 @@ public class World extends Application3D implements KeyListener, MouseListener {
         switch (keyEvent.getKeyCode()) {
 
             case KeyEvent.VK_UP:
-                cameraZ += 0.2f;
+                cameraZ -= 0.2f;
                 if (insideTerrain()) {
-                    cameraY = terrain.altitude(cameraX, cameraZ) + 0.5f;
+                    cameraY = terrain.altitude(cameraX, cameraZ) + 1.5f;
+//                    System.out.println(cameraY);
+                } else {
+                    cameraY = 1;
                 }
                 break;
             case KeyEvent.VK_DOWN:
-                cameraZ -= 0.2f;
+                cameraZ += 0.2f;
                 if (insideTerrain()) {
-                    cameraY = terrain.altitude(cameraX, cameraZ) + 0.5f;
+                    cameraY = terrain.altitude(cameraX, cameraZ) + 1.5f;
+//                    System.out.println(cameraY);
+                } else {
+                    cameraY = 1;
                 }
                 break;
             case KeyEvent.VK_LEFT:
@@ -147,7 +153,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
 
     private boolean insideTerrain() {
-        return cameraX >= 0 && cameraZ >= 0 && cameraX < terrain.getWidth() && cameraZ < terrain.getDepth();
+        return cameraX >= 0 && cameraZ >= 0 && cameraX <= terrain.getWidth()-1 && cameraZ <= terrain.getDepth()-1;
     }
 
     @Override

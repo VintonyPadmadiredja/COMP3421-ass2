@@ -108,21 +108,21 @@ public class Terrain {
      */
     public float altitude(float x, float z) {
         float altitude = 0;
-        System.out.println(x + " " + z);
+//        System.out.println(x + " " + z);
         // TODO: Implement this
         int lowerBoundX = (int) Math.floor(x);
-        int upperBoundX = (int) Math.ceil(x);
+        int upperBoundX = lowerBoundX + 1; // can't do ceil in the case when x,z is a whole number
         int lowerBoundZ = (int) Math.floor(z);
-        int upperBoundZ = (int) Math.ceil(z);
+        int upperBoundZ = lowerBoundZ + 1;
 
         Point3D p0 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
-        System.out.format("p0 = %d, %d, %d", upperBoundX, (int)getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
+//        System.out.format("p0 = %d, %d, %d\n", upperBoundX, (int) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p1 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
-//        System.out.format("p1 = %d, %d, %d", lowerBoundX, (int)getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
+//        System.out.format("p1 = %d, %d, %d\n", lowerBoundX, (int)getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p2 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
-//        System.out.format("p2 = %d, %d, %d", lowerBoundX, (int)getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
+//        System.out.format("p2 = %d, %d, %d\n", lowerBoundX, (int)getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
         Point3D p3 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
-//        System.out.format("p3 = %d, %d, %d", upperBoundX, (int)getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
+//        System.out.format("p3 = %d, %d, %d\n", upperBoundX, (int)getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
 
         // test point is above or below a line
         // p1      p0
@@ -141,11 +141,11 @@ public class Terrain {
         // == 0 on the line
 
         float f_value = 2 * (x - p0.getX()) + 2 * (z - p0.getZ());
-        System.out.println(f_value);
+//        System.out.println(f_value);
         if (f_value < 0) {
-            altitude = (float) bilinearInterpolate(x, z, p2, p0, p3);
-        } else if (f_value > 0) {
             altitude = (float) bilinearInterpolate(x, z, p1, p2, p0);
+        } else if (f_value > 0) {
+            altitude = (float) bilinearInterpolate(x, z, p3, p0, p2);
         } else { // == 0
             altitude = (float) linearInterpolateZ(z, p0, p2);
         }
@@ -161,7 +161,7 @@ public class Terrain {
      * @param z
      */
     public void addTree(float x, float z) {
-        System.out.println("x = " + x + " z = " + z);
+//        System.out.println("x = " + x + " z = " + z);
         float y = altitude(x, z) + 1f;
         z = z + 0.125f;
         Tree tree = new Tree(x, y, z);
@@ -184,16 +184,20 @@ public class Terrain {
     private double bilinearInterpolate(float x, float z, Point3D p1, Point3D p2, Point3D p3) {
         // linear interpolation of z for both lines, p1-p2 and p3-p2
         double alt1 = linearInterpolateZ(z, p1, p2);
-        System.out.println("alt1 = " + alt1);
+//        System.out.println("alt1 = " + alt1);
         double alt2 = linearInterpolateZ(z, p3, p2);
-        System.out.println("alt2 = " + alt2);
+//        System.out.println("alt2 = " + alt2);
+
+//        System.out.format("p1 = %f, %f, %f\n", p1.getX(), p1.getY(), p1.getZ());
+//        System.out.format("p2 = %f, %f, %f\n", p2.getX(), p2.getY(), p2.getZ());
+//        System.out.format("p3 = %f, %f, %f\n", p3.getX(), p3.getY(), p3.getZ());
         // find points which corresponds to altitude calculated
-        Point3D point1 = new Point3D(getXFromLine(z, p1.getX(), p2.getX(), p1.getZ(), p2.getZ()),
-                (float) alt1,
-                getZFromLine(x, p1.getX(), p2.getX(), p1.getZ(), p2.getZ()));
-        Point3D point2 = new Point3D(getXFromLine(z, p1.getX(), p2.getX(), p1.getZ(), p2.getZ()),
-                (float) alt2,
-                getZFromLine(x, p1.getX(), p2.getX(), p1.getZ(), p2.getZ()));
+        Point3D point1 = new Point3D(getXFromLine(z, p1.getX(), p1.getZ(), p2.getX(), p2.getZ()),
+                (float) alt1, z);
+//        System.out.println(point1.getX() + " " + point1.getY() + " " + point1.getZ());
+        Point3D point2 = new Point3D(getXFromLine(z, p3.getX(), p3.getZ(), p2.getX(), p2.getZ()),
+                (float) alt2, z);
+//        System.out.println(point2.getX() + " " + point2.getY() + " " + point2.getZ());
         // return linear interpolation of x
         return linearInterpolateX(x, point1, point2);
     }
@@ -208,12 +212,18 @@ public class Terrain {
                 ((p2.getX() - x) / (p2.getX() - p1.getX())) * getGridAltitude((int) p1.getX(), (int) p1.getZ());
     }
 
-    private float getZFromLine(float x, float x1, float z1, float x2, float z2) {
-        return (z1 + ((z2 - z1)/(x2 - x1))*(x - x1));
-    }
+//    private float getZFromLine(float x, float x1, float z1, float x2, float z2) {
+//        System.out.println("GetZ");
+//        System.out.println((z2 - z1) / (x2 - x1));
+//        System.out.println(x - x1);
+//        return ( z1 + ( ((z2 - z1) / (x2 - x1)) * (x - x1) ) );
+//    }
 
     private float getXFromLine(float z, float x1, float z1, float x2, float z2) {
-        return ((z - z1)/((z2 - z1)/(x2 - x1)) + x1);
+//        System.out.println("GetX");
+//        System.out.println((z - z1) * (x2 - x1));
+//        System.out.println(z2 - z1);
+        return ( ( ((z - z1) * (x2 - x1)) / (z2 - z1) ) + x1 );
     }
 
     public void makeTerrain(GL3 gl) {
