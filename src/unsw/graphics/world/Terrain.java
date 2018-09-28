@@ -103,7 +103,7 @@ public class Terrain {
      */
     public float altitude(float x, float z) {
         float altitude = 0;
-
+        System.out.println(x + " " + z);
         // TODO: Implement this
         int lowerBoundX = (int) Math.floor(x);
         int upperBoundX = (int) Math.ceil(x);
@@ -111,7 +111,7 @@ public class Terrain {
         int upperBoundZ = (int) Math.ceil(z);
 
         Point3D p0 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
-//        System.out.format("p0 = %d, %d, %d", upperBoundX, (int)getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
+        System.out.format("p0 = %d, %d, %d", upperBoundX, (int)getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p1 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
 //        System.out.format("p1 = %d, %d, %d", lowerBoundX, (int)getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p2 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
@@ -135,8 +135,8 @@ public class Terrain {
         // > 0 above the line
         // == 0 on the line
 
-        float f_value = 2*(x - p0.getX()) + 2 * (z - p0.getZ());
-//        System.out.println(f_value);
+        float f_value = 2 * (x - p0.getX()) + 2 * (z - p0.getZ());
+        System.out.println(f_value);
         if (f_value < 0) {
             altitude = (float) bilinearInterpolate(x, z, p2, p0, p3);
         } else if (f_value > 0) {
@@ -158,7 +158,7 @@ public class Terrain {
     public void addTree(float x, float z) {
         System.out.println("x = " + x + " z = " + z);
         float y = altitude(x, z) + 1f;
-        z = z + 0.1f;
+        z = z + 0.125f;
         Tree tree = new Tree(x, y, z);
         trees.add(tree);
     }
@@ -175,11 +175,13 @@ public class Terrain {
         roads.add(road);        
     }
 
-    // p = point within triangle, p1 = left end, p2 = common point, p3 = right end
+    // (x,z) = point within triangle, p1 = left end, p2 = common point, p3 = right end
     private double bilinearInterpolate(float x, float z, Point3D p1, Point3D p2, Point3D p3) {
         // linear interpolation of z for both lines, p1-p2 and p3-p2
         double alt1 = linearInterpolateZ(z, p1, p2);
+        System.out.println("alt1 = " + alt1);
         double alt2 = linearInterpolateZ(z, p3, p2);
+        System.out.println("alt2 = " + alt2);
         // find points which corresponds to altitude calculated
         Point3D point1 = new Point3D(getXFromLine(z, p1.getX(), p2.getX(), p1.getZ(), p2.getZ()),
                 (float) alt1,
@@ -284,5 +286,13 @@ public class Terrain {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 }
