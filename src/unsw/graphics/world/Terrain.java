@@ -2,6 +2,7 @@ package unsw.graphics.world;
 
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import unsw.graphics.geometry.TriangleMesh;
  */
 public class Terrain {
 
+    private static final int NUM_SLICES = 32;
     private int width;
     private int depth;
     private float[][] altitudes;
@@ -27,6 +29,8 @@ public class Terrain {
     private List<Road> roads;
     private Vector3 sunlight;
     private List<TriangleMesh> terrainMeshes =  new ArrayList<>();
+    private List<TriangleMesh> treeMeshes =  new ArrayList<>();
+
     /**
      * Create a new terrain
      *
@@ -153,7 +157,8 @@ public class Terrain {
      */
     public void addTree(float x, float z) {
         System.out.println("x = " + x + " z = " + z);
-        float y = altitude(x, z);
+        float y = altitude(x, z) + 1f;
+        z = z + 0.1f;
         Tree tree = new Tree(x, y, z);
         trees.add(tree);
     }
@@ -264,5 +269,20 @@ public class Terrain {
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
         for (TriangleMesh mesh : terrainMeshes)
             mesh.draw(gl, frame);
+
+        // Load tree.ply model and draw trees
+        try {
+            TriangleMesh treeModel = new TriangleMesh("res/models/tree.ply", true, true);
+            treeModel.init(gl);
+
+            for (Tree tree: trees) {
+                CoordFrame3D treeFrame = frame
+                        .translate(tree.getPosition())
+                        .scale(0.2f,0.2f, 0.2f);
+                treeModel.draw(gl, treeFrame);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
