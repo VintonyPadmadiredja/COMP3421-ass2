@@ -203,13 +203,13 @@ public class Terrain {
     }
 
     private double linearInterpolateZ(float z, Point3D p1, Point3D p2) {
-        return ((z - p1.getZ()) / (p2.getZ() - p1.getZ())) * getGridAltitude((int) p2.getX(), (int) p2.getZ()) +
-                ((p2.getZ() - z) / (p2.getZ() - p1.getZ())) * getGridAltitude((int) p1.getX(), (int) p1.getZ());
+        return ((z - p1.getZ()) / (p2.getZ() - p1.getZ())) * p2.getY() +
+                ((p2.getZ() - z) / (p2.getZ() - p1.getZ())) * p1.getY();
     }
 
     private double linearInterpolateX(float x, Point3D p1, Point3D p2) {
-        return ((x - p1.getX()) / (p2.getX() - p1.getX())) * getGridAltitude((int) p2.getX(), (int) p2.getZ()) +
-                ((p2.getX() - x) / (p2.getX() - p1.getX())) * getGridAltitude((int) p1.getX(), (int) p1.getZ());
+        return ((x - p1.getX()) / (p2.getX() - p1.getX())) * p2.getY() +
+                ((p2.getX() - x) / (p2.getX() - p1.getX())) * p1.getY();
     }
 
 //    private float getZFromLine(float x, float x1, float z1, float x2, float z2) {
