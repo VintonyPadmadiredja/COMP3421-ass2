@@ -30,6 +30,10 @@ public class World extends Application3D implements KeyListener, MouseListener {
     private float cameraX = 0;
     private float cameraY = 2;
     private float cameraZ = 0;
+    private float terrainRotationY = 90;
+    private float terrainScale = 1;
+    private Point3D terrainTranslation = new Point3D(0, 0, 0);
+
     private float rotateX = 0;
     private float rotateY = 0;
     private Point2D myMousePoint = null;
@@ -40,12 +44,13 @@ public class World extends Application3D implements KeyListener, MouseListener {
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
-   
+        cameraX = -terrain.getWidth()/2 + 1;
+        cameraZ = -terrain.getDepth()/2 + 1;
     }
-   
+
     /**
      * Load a level file and display it.
-     * 
+     *
      * @param args - The first argument is a level file in JSON format
      * @throws FileNotFoundException
      */
@@ -64,7 +69,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
 
-        CoordFrame3D frame = CoordFrame3D.identity().rotateY(90)
+        CoordFrame3D frame = CoordFrame3D.identity().rotateY(terrainRotationY)
             .rotateX(rotateX).rotateY(rotateY);
         Shader.setPenColor(gl, Color.GRAY);
 
@@ -75,7 +80,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
 	@Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
-		
+
 	}
 
 	@Override
@@ -121,41 +126,21 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
             case KeyEvent.VK_UP:
                 cameraZ += 0.2f;
-                if (insideTerrain()) {
-                    cameraY = terrain.altitude(cameraX, cameraZ) + 2;
-//                    System.out.println(cameraY);
-                } else {
-                    cameraY = 2;
-                }
+                moveCamera();
                 break;
             case KeyEvent.VK_DOWN:
                 cameraZ -= 0.2f;
-                if (insideTerrain()) {
-                    cameraY = terrain.altitude(cameraX, cameraZ) + 2;
-//                    System.out.println(cameraY);
-                } else {
-                    cameraY = 2;
-                }
+                moveCamera();
                 break;
             case KeyEvent.VK_LEFT:
-//                terrainY -= 2f;
-                cameraX -= 0.2f;
-                if (insideTerrain()) {
-                    cameraY = terrain.altitude(cameraX, cameraZ) + 2;
-//                    System.out.println(cameraY);
-                } else {
-                    cameraY = 2;
-                }
+                terrainRotationY -= 2f;
+//                cameraX -= 0.2f;
+                moveCamera();
                 break;
             case KeyEvent.VK_RIGHT:
-//                terrainY += 2f;
-                cameraX += 0.2f;
-                if (insideTerrain()) {
-                    cameraY = terrain.altitude(cameraX, cameraZ) + 2;
-//                    System.out.println(cameraY);
-                } else {
-                    cameraY = 2;
-                }
+                terrainRotationY += 2f;
+//                cameraX += 0.2f;
+                moveCamera();
                 break;
             default:
                 break;
@@ -163,9 +148,36 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
     }
 
+    private void moveCamera() {
+        if (insideTerrain()) {
+            Point3D cameraPosition = getCameraPositionInTerrain();
+            System.out.println(cameraPosition.getX() + " " + cameraPosition.getZ());
+            cameraPosition = new Point3D(cameraPosition.getX() + terrain.getWidth()/2 - 1, 0 ,
+                    cameraPosition.getZ() + terrain.getDepth()/2 - 1);
+            System.out.println(cameraPosition.getX() + " " + cameraPosition.getZ());
+            cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + 2;
+        } else {
+            cameraY = 2;
+        }
+    }
 
     private boolean insideTerrain() {
-        return cameraX >= 0 && cameraZ >= 0 && cameraX <= terrain.getWidth()-1 && cameraZ <= terrain.getDepth()-1;
+        Point3D cameraPosition = getCameraPositionInTerrain();
+        return cameraPosition.getX() >= (-terrain.getWidth()/2 + 1)
+                && cameraPosition.getX() < (terrain.getWidth()/2 - 1)
+                && cameraPosition.getZ() >= (-terrain.getDepth()/2 + 1)
+                && cameraPosition.getZ() < (terrain.getDepth()/2 - 1)
+                && cameraPosition.getX() <= terrain.getWidth()-1
+                && cameraPosition.getZ() <= terrain.getDepth()-1;
+    }
+
+    private Point3D getCameraPositionInTerrain() {
+        Matrix4 inv = Matrix4.scale(1/terrainScale, 1/terrainScale, 1/terrainScale)
+                .multiply(Matrix4.rotationY(terrainRotationY-90))
+                .multiply(Matrix4.translation(-terrainTranslation.getX(), -terrainTranslation.getY(),
+                        -terrainTranslation.getZ()));
+        Point3D cameraTranslation = new Point3D(cameraX, cameraY, cameraZ);
+        return inv.multiply(cameraTranslation.asHomogenous()).asPoint3D();
     }
 
     @Override
