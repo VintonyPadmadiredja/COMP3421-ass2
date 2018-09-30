@@ -44,7 +44,8 @@ public class World extends Application3D implements KeyListener, MouseListener {
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
-
+        cameraX = -terrain.getWidth()/2 + 1;
+        cameraZ = -terrain.getDepth()/2 + 1;
     }
 
     /**
@@ -150,6 +151,10 @@ public class World extends Application3D implements KeyListener, MouseListener {
     private void moveCamera() {
         if (insideTerrain()) {
             Point3D cameraPosition = getCameraPositionInTerrain();
+            System.out.println(cameraPosition.getX() + " " + cameraPosition.getZ());
+            cameraPosition = new Point3D(cameraPosition.getX() + terrain.getWidth()/2 - 1, 0 ,
+                    cameraPosition.getZ() + terrain.getDepth()/2 - 1);
+            System.out.println(cameraPosition.getX() + " " + cameraPosition.getZ());
             cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + 2;
         } else {
             cameraY = 2;
@@ -158,7 +163,10 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
     private boolean insideTerrain() {
         Point3D cameraPosition = getCameraPositionInTerrain();
-        return cameraPosition.getX() >= 0 && cameraPosition.getZ() >= 0
+        return cameraPosition.getX() >= (-terrain.getWidth()/2 + 1)
+                && cameraPosition.getX() < (terrain.getWidth()/2 - 1)
+                && cameraPosition.getZ() >= (-terrain.getDepth()/2 + 1)
+                && cameraPosition.getZ() < (terrain.getDepth()/2 - 1)
                 && cameraPosition.getX() <= terrain.getWidth()-1
                 && cameraPosition.getZ() <= terrain.getDepth()-1;
     }

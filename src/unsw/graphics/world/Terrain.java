@@ -241,10 +241,15 @@ public class Terrain {
                 //        ------
                 //      p2      p3
 
-                points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z));
-                points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
-                points.add(new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1));
-                points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1));
+                // to draw terrain at origin
+                int originX = x - (int) Math.floor(width/2) + 1;
+                System.out.println(originX);
+                int originZ = z - (int) Math.floor(depth/2) + 1;
+                System.out.println(originZ);
+                points.add(new Point3D(originX + 1, (float) getGridAltitude(x + 1, z), originZ));
+                points.add(new Point3D(originX, (float) getGridAltitude(x, z), originZ));
+                points.add(new Point3D(originX, (float) getGridAltitude(x, z + 1), originZ + 1));
+                points.add(new Point3D(originX + 1, (float) getGridAltitude(x + 1, z + 1), originZ + 1));
 
                 // indices.add(4*x);
                 // indices.add(4*x + 1);
