@@ -17,6 +17,7 @@ import unsw.graphics.*;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
+import unsw.graphics.scene.MathUtil;
 
 
 /**
@@ -27,12 +28,18 @@ import unsw.graphics.geometry.TriangleMesh;
 public class World extends Application3D implements KeyListener, MouseListener {
 
     private Terrain terrain;
+
     private float cameraX = 0;
     private float cameraY = 2;
     private float cameraZ = 0;
+    private float cameraRotationY = 0;
+
     private float terrainRotationY = 90;
     private float terrainScale = 1;
     private Point3D terrainTranslation = new Point3D(0, 0, 0);
+
+    private float lineOfSightX = 0;
+    private float lineOfSightZ = -1;
 
     private float rotateX = 0;
     private float rotateY = 0;
@@ -64,7 +71,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
 		super.display(gl);
 
 		//camera
-        CoordFrame3D view = CoordFrame3D.identity().translate(-cameraX, -cameraY, cameraZ);
+        CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
 
@@ -124,22 +131,34 @@ public class World extends Application3D implements KeyListener, MouseListener {
         switch (keyEvent.getKeyCode()) {
 
             case KeyEvent.VK_UP:
-                cameraZ += 0.2f;
+//                cameraZ += 0.2f;
+                cameraX += lineOfSightX * 0.2f;
+                cameraZ += lineOfSightZ * 0.2f;
                 moveCamera();
                 break;
             case KeyEvent.VK_DOWN:
-                cameraZ -= 0.2f;
+//                cameraZ -= 0.2f;
+                cameraX -= lineOfSightX * 0.2f;
+                cameraZ -= lineOfSightZ * 0.2f;
                 moveCamera();
                 break;
             case KeyEvent.VK_LEFT:
-                terrainRotationY -= 2f;
+                cameraRotationY -= 2f;
 //                cameraX -= 0.2f;
-                moveCamera();
+                lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
+                lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
+//                System.out.println("left, camera angle = "+ cameraRotationY);
+//                System.out.println("X = " + lineOfSightX + " Z = "+lineOfSightZ);
+//                moveCamera();
                 break;
             case KeyEvent.VK_RIGHT:
-                terrainRotationY += 2f;
+                cameraRotationY += 2f;
 //                cameraX += 0.2f;
-                moveCamera();
+                lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
+                lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
+//                System.out.println("right, camera angle = "+ cameraRotationY);
+//                System.out.println("X = " + lineOfSightX + " Z = "+lineOfSightZ);
+//                moveCamera();
                 break;
             default:
                 break;
@@ -165,7 +184,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
     private Point3D getCameraPositionInTerrain() {
         Matrix4 inv = Matrix4.scale(1/terrainScale, 1/terrainScale, 1/terrainScale)
-                .multiply(Matrix4.rotationY(terrainRotationY-90))
+                .multiply(Matrix4.rotationY(-terrainRotationY))
                 .multiply(Matrix4.translation(-terrainTranslation.getX(), -terrainTranslation.getY(),
                         -terrainTranslation.getZ()));
         Point3D cameraTranslation = new Point3D(cameraX, cameraY, cameraZ);
