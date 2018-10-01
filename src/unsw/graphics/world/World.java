@@ -3,20 +3,14 @@ package unsw.graphics.world;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
-import com.jogamp.newt.event.MouseEvent;
-import com.jogamp.newt.event.MouseListener;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.*;
-import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
-import unsw.graphics.geometry.TriangleMesh;
 import unsw.graphics.scene.MathUtil;
 
 
@@ -25,7 +19,7 @@ import unsw.graphics.scene.MathUtil;
  *
  * @author malcolmr
  */
-public class World extends Application3D implements KeyListener, MouseListener {
+public class World extends Application3D implements KeyListener {
 
     private Terrain terrain;
 
@@ -41,10 +35,6 @@ public class World extends Application3D implements KeyListener, MouseListener {
     private float lineOfSightX = 0;
     private float lineOfSightZ = -1;
 
-    private float rotateX = 0;
-    private float rotateY = 0;
-    private Point2D myMousePoint = null;
-    private static final int ROTATION_SCALE = 1;
     private Texture terrainTexture;
 
 
@@ -75,8 +65,7 @@ public class World extends Application3D implements KeyListener, MouseListener {
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
 
-        CoordFrame3D frame = CoordFrame3D.identity().rotateY(terrainRotationY)
-            .rotateX(rotateX).rotateY(rotateY);
+        CoordFrame3D frame = CoordFrame3D.identity().rotateY(terrainRotationY);
         Shader.setPenColor(gl, Color.GRAY);
 
         terrain.drawTerrain(gl, frame);
@@ -93,7 +82,6 @@ public class World extends Application3D implements KeyListener, MouseListener {
 	public void init(GL3 gl) {
 		super.init(gl);
         getWindow().addKeyListener(this);
-        getWindow().addMouseListener(this);
 
         Shader shader = new Shader(gl, "shaders/vertex_flat.glsl",
                 "shaders/fragment_flat.glsl");
@@ -193,56 +181,6 @@ public class World extends Application3D implements KeyListener, MouseListener {
 
     @Override
     public void keyReleased(KeyEvent keyEvent) {
-
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent mouseEvent) {
-        myMousePoint = new Point2D(mouseEvent.getX(), mouseEvent.getY());
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent mouseEvent) {
-        Point2D p = new Point2D(mouseEvent.getX(), mouseEvent.getY());
-
-        if (myMousePoint != null) {
-            float dx = p.getX() - myMousePoint.getX();
-            float dy = p.getY() - myMousePoint.getY();
-
-            rotateY += dx * ROTATION_SCALE;
-            rotateX += dy * ROTATION_SCALE;
-
-        }
-        myMousePoint = p;
-    }
-
-    @Override
-    public void mouseWheelMoved(MouseEvent mouseEvent) {
 
     }
 }
