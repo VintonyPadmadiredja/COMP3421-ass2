@@ -30,6 +30,7 @@ public class World extends Application3D implements KeyListener {
     private float cameraZ = 0;
     private float cameraRotationY = 0;
 
+    private final float ROTATION_SCALE = 2f;
     private final float TRANSLATION_SCALE = 0.2f;
 
     private float terrainRotationY = 90;
@@ -135,7 +136,7 @@ public class World extends Application3D implements KeyListener {
                 moveCamera();
                 break;
             case KeyEvent.VK_LEFT:
-                cameraRotationY -= MINIMUM_ALTITUDE;
+                cameraRotationY -= ROTATION_SCALE;
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
 //                System.out.println("left, camera angle = "+ cameraRotationY);
@@ -143,7 +144,7 @@ public class World extends Application3D implements KeyListener {
 //                moveCamera();
                 break;
             case KeyEvent.VK_RIGHT:
-                cameraRotationY += MINIMUM_ALTITUDE;
+                cameraRotationY += ROTATION_SCALE;
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
 //                System.out.println("right, camera angle = "+ cameraRotationY);
