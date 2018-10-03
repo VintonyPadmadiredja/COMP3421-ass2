@@ -1,14 +1,11 @@
 package unsw.graphics.world;
 
-import com.jogamp.graph.geom.Triangle;
 import com.jogamp.opengl.GL3;
 import unsw.graphics.CoordFrame3D;
-import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
 
 import java.io.IOException;
-import java.io.StreamCorruptedException;
 
 /**
  * COMMENT: Comment Tree 

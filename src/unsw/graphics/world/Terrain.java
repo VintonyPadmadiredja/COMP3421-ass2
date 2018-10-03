@@ -230,8 +230,8 @@ public class Terrain {
 
     public void makeTerrain(GL3 gl) {
         // Initialise textures
-        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
-        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", false);
+        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", true);
+        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
 
         // Initialise shader
         shader = new Shader(gl, "shaders/vertex_tex_3d.glsl", "shaders/fragment_tex_3d.glsl");
@@ -300,35 +300,29 @@ public class Terrain {
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
 
         // ------- DRAW TERRAIN -------
-
+        Shader.setPenColor(gl, Color.WHITE);
         Shader.setInt(gl, "tex", 0);
         gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
-        Shader.setViewMatrix(gl, frame.getMatrix());
+//        Shader.setViewMatrix(gl, frame.getMatrix());
 
-        // Set wrap mode for texture in S direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
-
-        // Set wrap mode for texture in T direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
+//        // Set wrap mode for texture in S direction
+//        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
+//
+//        // Set wrap mode for texture in T direction
+//        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
 
         // Draw terrain
         for (TriangleMesh mesh : terrainMeshes)
             mesh.draw(gl, frame);
-
-
-        // ------- DRAW TREES -------
-
+//
+//
+//        // ------- DRAW TREES -------
+        Shader.setPenColor(gl, Color.WHITE);
         Shader.setInt(gl, "tex", 0);
         gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL.GL_TEXTURE_2D, treeTexture.getId());
-        Shader.setViewMatrix(gl, frame.getMatrix());
-
-        // Set wrap mode for texture in S direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
-
-        // Set wrap mode for texture in T direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
+//        Shader.setViewMatrix(gl, frame.getMatrix());
 
         // Draw trees
         for (Tree tree: trees)
