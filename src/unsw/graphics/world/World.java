@@ -65,11 +65,28 @@ public class World extends Application3D implements KeyListener {
 	public void display(GL3 gl) {
 		super.display(gl);
 
+        Shader.setInt(gl, "tex", 0);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
+
+        Shader.setPenColor(gl, Color.WHITE);
+
 		//camera
         CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
 
+        // Set the lighting properties
+        Shader.setPoint3D(gl, "lightPos", terrain.getSunlight().asPoint3D());
+        Shader.setColor(gl, "lightIntensity", Color.WHITE);
+        Shader.setColor(gl, "ambientIntensity", new Color(0.5f, 0.5f, 0.5f));
+
+        // Set the material properties
+        Shader.setColor(gl, "ambientCoeff", Color.WHITE);
+        Shader.setColor(gl, "diffuseCoeff", new Color(0.5f, 0.5f, 0.5f));
+        Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
+        Shader.setFloat(gl, "phongExp", 16f);
+        
         CoordFrame3D frame = CoordFrame3D.identity().rotateY(terrainRotationY);
         Shader.setPenColor(gl, Color.GRAY);
 
@@ -87,29 +104,13 @@ public class World extends Application3D implements KeyListener {
 	public void init(GL3 gl) {
 		super.init(gl);
         getWindow().addKeyListener(this);
-
-        Shader shader = new Shader(gl, "shaders/vertex_flat.glsl",
-                "shaders/fragment_flat.glsl");
-        shader.use(gl);
-
-        // Set the lighting properties
-        Shader.setPoint3D(gl, "lightPos", new Point3D(0, 0, 5));
-        Shader.setColor(gl, "lightIntensity", Color.WHITE);
-        Shader.setColor(gl, "ambientIntensity", new Color(0.2f, 0.2f, 0.2f));
-
-        // Set the material properties
-        Shader.setColor(gl, "ambientCoeff", Color.WHITE);
-        Shader.setColor(gl, "diffuseCoeff", new Color(0.5f, 0.5f, 0.5f));
-        Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
-        Shader.setFloat(gl, "phongExp", 16f);
-
-        Shader terrainShader = new Shader(gl, "shaders/vertex_tex_3d.glsl", "shaders/fragment_tex_3d.glsl");
-        terrainShader.use(gl);
-        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
-        Shader.setInt(gl, "tex", 0);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
         terrain.makeTerrain(gl);
+
+        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
+
+        Shader shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
+                "shaders/fragment_tex_phong_world.glsl");
+        shader.use(gl);
     }
 
 	@Override
@@ -174,12 +175,16 @@ public class World extends Application3D implements KeyListener {
     }
 
     private Point3D getCameraPositionInTerrain() {
-        Matrix4 inv = Matrix4.scale(1/terrainScale, 1/terrainScale, 1/terrainScale)
+        Matrix4 inv = getTerrainInverseModelMatrix();
+        Point3D cameraTranslation = new Point3D(cameraX, cameraY, cameraZ);
+        return inv.multiply(cameraTranslation.asHomogenous()).asPoint3D();
+    }
+
+    private Matrix4 getTerrainInverseModelMatrix() {
+        return Matrix4.scale(1/terrainScale, 1/terrainScale, 1/terrainScale)
                 .multiply(Matrix4.rotationY(-terrainRotationY))
                 .multiply(Matrix4.translation(-terrainTranslation.getX(), -terrainTranslation.getY(),
                         -terrainTranslation.getZ()));
-        Point3D cameraTranslation = new Point3D(cameraX, cameraY, cameraZ);
-        return inv.multiply(cameraTranslation.asHomogenous()).asPoint3D();
     }
 
     @Override
