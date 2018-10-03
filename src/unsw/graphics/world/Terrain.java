@@ -313,11 +313,11 @@ public class Terrain {
         gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
 //        Shader.setViewMatrix(gl, frame.getMatrix());
 
-//        // Set wrap mode for texture in S direction
-//        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
-//
-//        // Set wrap mode for texture in T direction
-//        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
+        // Set wrap mode for texture in S direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
+
+        // Set wrap mode for texture in T direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
 
         // Draw terrain
         for (TriangleMesh mesh : terrainMeshes)
