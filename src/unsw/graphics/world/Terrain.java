@@ -286,7 +286,10 @@ public class Terrain {
                 //        |/   |
                 //        ------
                 //      p2      p3
-
+                Point3D p0 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z);
+                Point3D p1 = new Point3D(x, (float) getGridAltitude(x, z), z);
+                Point3D p2 = new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1);
+                Point3D p3 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1);
                 texCoords.add(new Point2D(0,0));
                 texCoords.add(new Point2D(0,1));
                 texCoords.add(new Point2D(1,1));
@@ -296,12 +299,13 @@ public class Terrain {
                 // abs(alt(p2) - alt(p0)) > abs(alt(p1) - alt(p3))
                 if (Math.abs(getGridAltitude(x, z + 1) - getGridAltitude(x + 1, z)) >
                         Math.abs(getGridAltitude(x + 1, z + 1) - getGridAltitude(x, z))) {
-                    points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z));
-                    points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
-                    points.add(new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1));
-                    points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z));
-                    points.add(new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1));
-                    points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1));
+                    points.add(p0);
+                    points.add(p1);
+                    points.add(p2);
+
+                    points.add(p0);
+                    points.add(p2);
+                    points.add(p3);
 //                    indices.add(4 * x);
 //                    indices.add(4 * x + 1);
 //                    indices.add(4 * x + 2);
@@ -310,12 +314,13 @@ public class Terrain {
 //                    indices.add(4 * x + 2);
 //                    indices.add(4 * x + 3);
                 } else {
-                    points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1));
-                    points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z));
-                    points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
-                    points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1));
-                    points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
-                    points.add(new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1));
+                    points.add(p3);
+                    points.add(p0);
+                    points.add(p1);
+
+                    points.add(p3);
+                    points.add(p1);
+                    points.add(p2);
 //                    indices.add(4 * x + 3);
 //                    indices.add(4 * x);
 //                    indices.add(4 * x + 1);
@@ -358,7 +363,7 @@ public class Terrain {
         // Set the material properties
         Shader.setColor(gl, "ambientCoeff", Color.WHITE);
         Shader.setColor(gl, "diffuseCoeff", new Color(0.5f, 0.5f, 0.5f));
-        Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
+        Shader.setColor(gl, "specularCoeff", new Color(0.5f, 0.5f, 0.5f));
         Shader.setFloat(gl, "phongExp", 16f);
 
         // Draw terrain
