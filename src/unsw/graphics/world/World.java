@@ -40,9 +40,6 @@ public class World extends Application3D implements KeyListener {
     private float lineOfSightX = 0;
     private float lineOfSightZ = -1;
 
-    private Texture terrainTexture;
-
-
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
@@ -65,27 +62,10 @@ public class World extends Application3D implements KeyListener {
 	public void display(GL3 gl) {
 		super.display(gl);
 
-        Shader.setInt(gl, "tex", 0);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
-
-        Shader.setPenColor(gl, Color.WHITE);
-
 		//camera
         CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
-
-        // Set the lighting properties
-        Shader.setPoint3D(gl, "lightPos", terrain.getSunlight().asPoint3D());
-        Shader.setColor(gl, "lightIntensity", Color.WHITE);
-        Shader.setColor(gl, "ambientIntensity", new Color(0.5f, 0.5f, 0.5f));
-
-        // Set the material properties
-        Shader.setColor(gl, "ambientCoeff", Color.WHITE);
-        Shader.setColor(gl, "diffuseCoeff", new Color(0.5f, 0.5f, 0.5f));
-        Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
-        Shader.setFloat(gl, "phongExp", 16f);
         
         CoordFrame3D frame = CoordFrame3D.identity().rotateY(terrainRotationY);
         Shader.setPenColor(gl, Color.GRAY);
@@ -105,12 +85,6 @@ public class World extends Application3D implements KeyListener {
 		super.init(gl);
         getWindow().addKeyListener(this);
         terrain.makeTerrain(gl);
-
-        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
-
-        Shader shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
-                "shaders/fragment_tex_phong_world.glsl");
-        shader.use(gl);
     }
 
 	@Override
