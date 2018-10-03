@@ -230,8 +230,10 @@ public class Terrain {
 
     public void makeTerrain(GL3 gl) {
         // Initialise textures
-        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", true);
+        terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
+
+        ArrayList<Point2D> texCoords = new ArrayList<Point2D>();
 
         // Initialise shader
         shader = new Shader(gl, "shaders/vertex_tex_3d.glsl", "shaders/fragment_tex_3d.glsl");
@@ -256,6 +258,11 @@ public class Terrain {
                 points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
                 points.add(new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1));
                 points.add(new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1));
+
+                texCoords.add(new Point2D(0,0));
+                texCoords.add(new Point2D(0,1));
+                texCoords.add(new Point2D(1,1));
+                texCoords.add(new Point2D(1,0));
 
                 // indices.add(4*x);
                 // indices.add(4*x + 1);
@@ -288,7 +295,7 @@ public class Terrain {
                 }
 
             }
-            TriangleMesh segment = new TriangleMesh(points, indices, true);
+            TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
             segment.init(gl);
             terrainMeshes.add(segment);
 
