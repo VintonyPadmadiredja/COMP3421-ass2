@@ -275,7 +275,7 @@ public class Terrain {
 
         for (int z = 0; z < depth - 1; z++) {
             List<Point3D> points = new ArrayList<>();
-            List<Integer> indices = new ArrayList<>();
+//            List<Integer> indices = new ArrayList<>();
             for (int x = 0; x < width - 1; x++) {
 
                 //      p1      p0
@@ -286,10 +286,12 @@ public class Terrain {
                 //        |/   |
                 //        ------
                 //      p2      p3
+
                 Point3D p0 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z);
                 Point3D p1 = new Point3D(x, (float) getGridAltitude(x, z), z);
                 Point3D p2 = new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1);
                 Point3D p3 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1);
+
                 texCoords.add(new Point2D(0,0));
                 texCoords.add(new Point2D(0,1));
                 texCoords.add(new Point2D(1,1));
@@ -306,6 +308,7 @@ public class Terrain {
                     points.add(p0);
                     points.add(p2);
                     points.add(p3);
+
 //                    indices.add(4 * x);
 //                    indices.add(4 * x + 1);
 //                    indices.add(4 * x + 2);
@@ -321,6 +324,7 @@ public class Terrain {
                     points.add(p3);
                     points.add(p1);
                     points.add(p2);
+                    
 //                    indices.add(4 * x + 3);
 //                    indices.add(4 * x);
 //                    indices.add(4 * x + 1);
