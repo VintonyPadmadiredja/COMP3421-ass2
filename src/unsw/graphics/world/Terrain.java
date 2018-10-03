@@ -33,7 +33,9 @@ public class Terrain {
     private List<Road> roads;
     private Vector3 sunlight;
     private List<TriangleMesh> terrainMeshes =  new ArrayList<>();
-    private List<TriangleMesh> treeMeshes =  new ArrayList<>();
+
+    private Shader shader;
+    private Texture terrainTexture;
     private Texture treeTexture;
 
     /**
@@ -227,6 +229,15 @@ public class Terrain {
     }
 
     public void makeTerrain(GL3 gl) {
+        // Initialise textures
+        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
+        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", false);
+
+        // Initialise shader
+        shader = new Shader(gl, "shaders/vertex_tex_3d.glsl", "shaders/fragment_tex_3d.glsl");
+        shader.use(gl);
+
+
         for (int z = 0; z < depth - 1; z++) {
             List<Point3D> points = new ArrayList<>();
             List<Integer> indices = new ArrayList<>();
@@ -280,33 +291,48 @@ public class Terrain {
             TriangleMesh segment = new TriangleMesh(points, indices, true);
             segment.init(gl);
             terrainMeshes.add(segment);
+
+            for (Tree tree : trees)
+                tree.init(gl);
         }
     }
 
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
+
+        // ------- DRAW TERRAIN -------
+
+        Shader.setInt(gl, "tex", 0);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
+        Shader.setViewMatrix(gl, frame.getMatrix());
+
+        // Set wrap mode for texture in S direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
+
+        // Set wrap mode for texture in T direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
+
+        // Draw terrain
         for (TriangleMesh mesh : terrainMeshes)
             mesh.draw(gl, frame);
 
-        // Load tree texture
-//        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", false);
-//        Shader.setInt(gl, "tex", 1);
-//        gl.glActiveTexture(GL.GL_TEXTURE1);
-//        gl.glBindTexture(GL.GL_TEXTURE_2D, treeTexture.getId());
 
-        // Load tree.ply model and draw trees
-        try {
-            TriangleMesh treeModel = new TriangleMesh("res/models/tree.ply", true, true);
-            treeModel.init(gl);
+        // ------- DRAW TREES -------
 
-            for (Tree tree: trees) {
-                CoordFrame3D treeFrame = frame
-                        .translate(tree.getPosition())
-                        .scale(0.2f,0.2f, 0.2f);
-                treeModel.draw(gl, treeFrame);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Shader.setInt(gl, "tex", 0);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, treeTexture.getId());
+        Shader.setViewMatrix(gl, frame.getMatrix());
+
+        // Set wrap mode for texture in S direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
+
+        // Set wrap mode for texture in T direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
+
+        // Draw trees
+        for (Tree tree: trees)
+            tree.draw(gl, frame);
     }
 
     public int getWidth() {

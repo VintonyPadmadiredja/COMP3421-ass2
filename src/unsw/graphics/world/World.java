@@ -40,9 +40,6 @@ public class World extends Application3D implements KeyListener {
     private float lineOfSightX = 0;
     private float lineOfSightZ = -1;
 
-    private Texture terrainTexture;
-
-
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
@@ -103,12 +100,6 @@ public class World extends Application3D implements KeyListener {
         Shader.setColor(gl, "specularCoeff", new Color(0.8f, 0.8f, 0.8f));
         Shader.setFloat(gl, "phongExp", 16f);
 
-        Shader terrainShader = new Shader(gl, "shaders/vertex_tex_3d.glsl", "shaders/fragment_tex_3d.glsl");
-        terrainShader.use(gl);
-        terrainTexture = new Texture(gl, "res/textures/grassTile.bmp", "bmp", false);
-        Shader.setInt(gl, "tex", 0);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
         terrain.makeTerrain(gl);
     }
 
