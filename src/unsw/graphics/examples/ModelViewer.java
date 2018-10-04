@@ -46,7 +46,7 @@ public class ModelViewer extends Application3D {
 
     public ModelViewer() throws IOException {
         super("Model viewer", 600, 600);
-        model = new TriangleMesh("res/models/tree.ply", true, true);
+        model = new TriangleMesh("res/models/bunny.ply", true, true);
         base = new TriangleMesh("res/models/cube_normals.ply", true, true);
     }
 
