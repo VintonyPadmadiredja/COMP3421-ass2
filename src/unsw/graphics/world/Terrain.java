@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
+import javafx.beans.binding.IntegerBinding;
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Shader;
 import unsw.graphics.Texture;
@@ -240,105 +241,122 @@ public class Terrain {
                 "shaders/fragment_tex_phong_world.glsl");
         shader.use(gl);
 
-//        List<Point3D> points = new ArrayList<>();
-//        List<Integer> indices = new ArrayList<>();
-//        for (int z = 0; z < depth; z++) {
-//            for (int x = 0; x < width; x++) {
-//                points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
-//                //      p3      p2
-//                //        ------
-//                //        |   /|
-//                //        |  / |
-//                //        | /  |
-//                //        |/   |
-//                //        ------
-//                //      p0      p1
-//
-//                if (z > 0 && x < width - 1) {
-//                    System.out.println(counter++);
-//                    indices.add(width * z);
-//                    indices.add((width * z) + 1);
-//                    indices.add(width * (z - 1) + 1);
-//
-//                    indices.add(width * z);
-//                    indices.add((width * (z - 1)) + 1);
-//                    indices.add(width * (z - 1));
-//                }
-//            }
-//
-//            for (Tree tree : trees)
-//                tree.init(gl);
-//        }
-//        TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
-//        segment.init(gl);
-//        terrainMeshes.add(segment);
-
-        for (int z = 0; z < depth - 1; z++) {
-            List<Point3D> points = new ArrayList<>();
-//            List<Integer> indices = new ArrayList<>();
-            for (int x = 0; x < width - 1; x++) {
-
-                //      p1      p0
+        List<Point3D> points = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
+        for (int z = 0; z < depth; z++) {
+            for (int x = 0; x < width; x++) {
+                points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
+                //      p3      p2
                 //        ------
                 //        |   /|
                 //        |  / |
                 //        | /  |
                 //        |/   |
                 //        ------
-                //      p2      p3
+                //      p0      p1
 
-                Point3D p0 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z);
-                Point3D p1 = new Point3D(x, (float) getGridAltitude(x, z), z);
-                Point3D p2 = new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1);
-                Point3D p3 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1);
+                if (z > 0 && x < (width - 1)) {
+                    Integer i0 = width * z + x;
+                    Integer i1 = (width * z) + 1 + x;
+                    Integer i2 = (width * (z - 1)) + 1 + x;
+                    Integer i3 = width * (z - 1) + x;
 
-                texCoords.add(new Point2D(0,0));
-                texCoords.add(new Point2D(0,1));
-                texCoords.add(new Point2D(1,1));
-                texCoords.add(new Point2D(1,0));
+                    texCoords.add(new Point2D(0,0));
+                    texCoords.add(new Point2D(0,1));
+                    texCoords.add(new Point2D(1,1));
+                    texCoords.add(new Point2D(1,0));
 
-                // determine which diagonal to take
-                // abs(alt(p2) - alt(p0)) > abs(alt(p1) - alt(p3))
-                if (Math.abs(getGridAltitude(x, z + 1) - getGridAltitude(x + 1, z)) >
-                        Math.abs(getGridAltitude(x + 1, z + 1) - getGridAltitude(x, z))) {
-                    points.add(p0);
-                    points.add(p1);
-                    points.add(p2);
+                    if (Math.abs(getGridAltitude(x, z) - getGridAltitude(x + 1, z - 1)) >
+                        Math.abs(getGridAltitude(x + 1, z) - getGridAltitude(x, z - 1))) {
+                        indices.add(i0);
+                        indices.add(i1);
+                        indices.add(i2);
 
-                    points.add(p0);
-                    points.add(p2);
-                    points.add(p3);
+                        indices.add(i0);
+                        indices.add(i2);
+                        indices.add(i3);
+                    } else {
+                        indices.add(i1);
+                        indices.add(i3);
+                        indices.add(i0);
 
-//                    indices.add(4 * x);
-//                    indices.add(4 * x + 1);
-//                    indices.add(4 * x + 2);
-//
-//                    indices.add(4 * x);
-//                    indices.add(4 * x + 2);
-//                    indices.add(4 * x + 3);
-                } else {
-                    points.add(p3);
-                    points.add(p0);
-                    points.add(p1);
-
-                    points.add(p3);
-                    points.add(p1);
-                    points.add(p2);
-
-//                    indices.add(4 * x + 3);
-//                    indices.add(4 * x);
-//                    indices.add(4 * x + 1);
-//
-//                    indices.add(4 * x + 3);
-//                    indices.add(4 * x + 1);
-//                    indices.add(4 * x + 2);
+                        indices.add(i1);
+                        indices.add(i2);
+                        indices.add(i3);
+                    }
                 }
-
             }
-            TriangleMesh segment = new TriangleMesh(points, true, texCoords);
-            segment.init(gl);
-            terrainMeshes.add(segment);
         }
+        TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
+        segment.init(gl);
+        terrainMeshes.add(segment);
+
+//        for (int z = 0; z < depth - 1; z++) {
+//            List<Point3D> points = new ArrayList<>();
+////            List<Integer> indices = new ArrayList<>();
+//            for (int x = 0; x < width - 1; x++) {
+//
+//                //      p1      p0
+//                //        ------
+//                //        |   /|
+//                //        |  / |
+//                //        | /  |
+//                //        |/   |
+//                //        ------
+//                //      p2      p3
+//
+//                Point3D p0 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z), z);
+//                Point3D p1 = new Point3D(x, (float) getGridAltitude(x, z), z);
+//                Point3D p2 = new Point3D(x, (float) getGridAltitude(x, z + 1), z + 1);
+//                Point3D p3 = new Point3D(x + 1, (float) getGridAltitude(x + 1, z + 1), z + 1);
+//
+//                texCoords.add(new Point2D(0,0));
+//                texCoords.add(new Point2D(0,1));
+//                texCoords.add(new Point2D(1,1));
+//                texCoords.add(new Point2D(1,0));
+//
+//                // determine which diagonal to take
+//                // abs(alt(p2) - alt(p0)) > abs(alt(p1) - alt(p3))
+//                if (Math.abs(getGridAltitude(x, z + 1) - getGridAltitude(x + 1, z)) >
+//                        Math.abs(getGridAltitude(x + 1, z + 1) - getGridAltitude(x, z))) {
+//                    points.add(p0);
+//                    points.add(p1);
+//                    points.add(p2);
+//
+//                    points.add(p0);
+//                    points.add(p2);
+//                    points.add(p3);
+//
+////                    indices.add(4 * x);
+////                    indices.add(4 * x + 1);
+////                    indices.add(4 * x + 2);
+////
+////                    indices.add(4 * x);
+////                    indices.add(4 * x + 2);
+////                    indices.add(4 * x + 3);
+//                } else {
+//                    points.add(p3);
+//                    points.add(p0);
+//                    points.add(p1);
+//
+//                    points.add(p3);
+//                    points.add(p1);
+//                    points.add(p2);
+//
+////                    indices.add(4 * x + 3);
+////                    indices.add(4 * x);
+////                    indices.add(4 * x + 1);
+////
+////                    indices.add(4 * x + 3);
+////                    indices.add(4 * x + 1);
+////                    indices.add(4 * x + 2);
+//                }
+//
+//            }
+//            TriangleMesh segment = new TriangleMesh(points, true, texCoords);
+//            segment.init(gl);
+//            terrainMeshes.add(segment);
+//        }
 
         for (Tree tree : trees)
             tree.init(gl);
@@ -362,12 +380,12 @@ public class Terrain {
         // Set the lighting properties
         Shader.setPoint3D(gl, "lightPos", sunlight.asPoint3D());
         Shader.setColor(gl, "lightIntensity", Color.WHITE);
-        Shader.setColor(gl, "ambientIntensity", new Color(0.2f, 0.2f, 0.2f));
+        Shader.setColor(gl, "ambientIntensity", new Color(0.5f, 0.5f, 0.5f));
 
         // Set the material properties
         Shader.setColor(gl, "ambientCoeff", Color.WHITE);
-        Shader.setColor(gl, "diffuseCoeff", new Color(0.5f, 0.5f, 0.5f));
-        Shader.setColor(gl, "specularCoeff", new Color(0.5f, 0.5f, 0.5f));
+        Shader.setColor(gl, "diffuseCoeff", new Color(0.8f, 0.8f, 0.8f));
+        Shader.setColor(gl, "specularCoeff", new Color(0.2f, 0.2f, 0.2f));
         Shader.setFloat(gl, "phongExp", 16f);
 
         // Draw terrain
