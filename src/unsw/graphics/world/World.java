@@ -28,12 +28,12 @@ public class World extends Application3D implements KeyListener {
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
     private float cameraZ = 0;
-    private float cameraRotationY = 0;
+    private float cameraRotationY = 90;
 
     private final float ROTATION_SCALE = 2f;
     private final float TRANSLATION_SCALE = 0.2f;
 
-    private float terrainRotationY = 90;
+    private float terrainRotationY = 0;
     private float terrainScale = 1;
     private Point3D terrainTranslation = new Point3D(0, 0, 0);
 
@@ -67,7 +67,7 @@ public class World extends Application3D implements KeyListener {
         Shader.setViewMatrix(gl, view.getMatrix());
 //        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
         
-        CoordFrame3D frame = CoordFrame3D.identity().rotateY(terrainRotationY);
+        CoordFrame3D frame = CoordFrame3D.identity();
         Shader.setPenColor(gl, Color.GRAY);
 
         terrain.drawTerrain(gl, frame);

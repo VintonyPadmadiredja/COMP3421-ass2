@@ -324,7 +324,7 @@ public class Terrain {
                     points.add(p3);
                     points.add(p1);
                     points.add(p2);
-                    
+
 //                    indices.add(4 * x + 3);
 //                    indices.add(4 * x);
 //                    indices.add(4 * x + 1);
@@ -338,10 +338,10 @@ public class Terrain {
             TriangleMesh segment = new TriangleMesh(points, true, texCoords);
             segment.init(gl);
             terrainMeshes.add(segment);
-
-            for (Tree tree : trees)
-                tree.init(gl);
         }
+
+        for (Tree tree : trees)
+            tree.init(gl);
     }
 
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
