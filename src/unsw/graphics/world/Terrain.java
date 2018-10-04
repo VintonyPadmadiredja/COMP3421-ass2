@@ -164,8 +164,7 @@ public class Terrain {
      */
     public void addTree(float x, float z) {
 //        System.out.println("x = " + x + " z = " + z);
-        float y = altitude(x, z) + 1f;
-        z = z + 0.125f;
+        float y = altitude(x, z);
         Tree tree = new Tree(x, y, z);
         trees.add(tree);
     }
@@ -295,6 +294,8 @@ public class Terrain {
                 texCoords.add(new Point2D(0,0));
                 texCoords.add(new Point2D(0,1));
                 texCoords.add(new Point2D(1,1));
+                texCoords.add(new Point2D(0,1));
+                texCoords.add(new Point2D(0,0));
                 texCoords.add(new Point2D(1,0));
 
                 // determine which diagonal to take
