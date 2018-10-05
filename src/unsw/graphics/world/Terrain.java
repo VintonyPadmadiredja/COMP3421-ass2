@@ -308,6 +308,25 @@ public class Terrain {
         for (Tree tree: trees)
             tree.draw(gl, frame);
     }
+
+
+    /**
+     * Destroy Terrain object
+     * @param gl
+     */
+    public void destroy(GL3 gl){
+        this.destroy(gl);
+    }
+
+    /**
+     * Destroy all tree objects
+     * @param gl
+     */
+    public void destroyTrees(GL3 gl){
+        for (Tree tree: trees)
+            tree.destroy(gl);
+    }
+
     /**
      * Get width of terrain
      * @return int
