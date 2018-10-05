@@ -26,13 +26,13 @@ public class World extends Application3D implements KeyListener {
     private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
     private final float TRANSITION_ALTITUDE_SCALE = 0.25f;
 
+    private final float ROTATION_SCALE = 2f;
+    private final float TRANSLATION_SCALE = 0.2f;
+
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
     private float cameraZ = 0;
     private float cameraRotationY = 90;
-
-    private final float ROTATION_SCALE = 2f;
-    private final float TRANSLATION_SCALE = 0.2f;
 
     private float terrainRotationY = 0;
     private float terrainScale = 1;
@@ -98,16 +98,15 @@ public class World extends Application3D implements KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getKeyCode()) {
-
             case KeyEvent.VK_UP:
                 cameraX += lineOfSightX * TRANSLATION_SCALE;
                 cameraZ += lineOfSightZ * TRANSLATION_SCALE;
-                moveCameraAltitude();
+                updateCameraAltitude();
                 break;
             case KeyEvent.VK_DOWN:
                 cameraX -= lineOfSightX * TRANSLATION_SCALE;
                 cameraZ -= lineOfSightZ * TRANSLATION_SCALE;
-                moveCameraAltitude();
+                updateCameraAltitude();
                 break;
             case KeyEvent.VK_LEFT:
                 cameraRotationY -= ROTATION_SCALE;
@@ -125,11 +124,15 @@ public class World extends Application3D implements KeyListener {
 
     }
 
-    private void moveCameraAltitude() {
+    /**
+     * Update camera's altitude (Y value) to follow terrain when moving up/down hills
+     */
+    private void updateCameraAltitude() {
         Point3D cameraPosition = getCameraPositionInTerrain();
         if (insideTerrain(cameraPosition)) {
             float tempY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
             // To smoothen transition between altitudes
+            // Specifically when entering/exiting the terrain
             if (tempY - cameraY > TRANSITION_ALTITUDE_THRESHOLD)
                 cameraY += (tempY - cameraY) * TRANSITION_ALTITUDE_SCALE;
             else
@@ -143,18 +146,31 @@ public class World extends Application3D implements KeyListener {
         }
     }
 
+    /**
+     * Check if camera's position is inside the terrain
+     * @param cameraPosition
+     * @return boolean
+     */
     private boolean insideTerrain(Point3D cameraPosition) {
         return cameraPosition.getX() >= 0 && cameraPosition.getZ() >= 0
                 && cameraPosition.getX() <= terrain.getWidth()-1
                 && cameraPosition.getZ() <= terrain.getDepth()-1;
     }
 
+    /**
+     * Get the camera's position within the Terrain's coordinate system
+     * @return Point3D
+     */
     private Point3D getCameraPositionInTerrain() {
         Matrix4 inv = getTerrainInverseModelMatrix();
         Point3D cameraTranslation = new Point3D(cameraX, cameraY, cameraZ);
         return inv.multiply(cameraTranslation.asHomogenous()).asPoint3D();
     }
 
+    /**
+     * Get the terrain's inverse model matrix
+     * @return Matrix4
+     */
     private Matrix4 getTerrainInverseModelMatrix() {
         return Matrix4.scale(1/terrainScale, 1/terrainScale, 1/terrainScale)
                 .multiply(Matrix4.rotationY(-terrainRotationY))
