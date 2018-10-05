@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.*;
@@ -24,6 +23,8 @@ public class World extends Application3D implements KeyListener {
     private Terrain terrain;
 
     private final float MINIMUM_ALTITUDE = 1.8f;
+    private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
+    private final float TRANSITION_ALTITUDE_SCALE = 0.25f;
 
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
@@ -37,13 +38,14 @@ public class World extends Application3D implements KeyListener {
     private float terrainScale = 1;
     private Point3D terrainTranslation = new Point3D(0, 0, 0);
 
-    private float lineOfSightX = 0;
-    private float lineOfSightZ = -1;
+    private float lineOfSightX = 1;
+    private float lineOfSightZ = 0;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
 
+        cameraY += (float) terrain.getGridAltitude(0, 0);
     }
 
     /**
@@ -65,8 +67,7 @@ public class World extends Application3D implements KeyListener {
 		//camera
         CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
-//        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
-        
+
         CoordFrame3D frame = CoordFrame3D.identity();
         Shader.setPenColor(gl, Color.GRAY);
 
@@ -99,32 +100,24 @@ public class World extends Application3D implements KeyListener {
         switch (keyEvent.getKeyCode()) {
 
             case KeyEvent.VK_UP:
-//                cameraZ += TRANSLATION_SCALE;
                 cameraX += lineOfSightX * TRANSLATION_SCALE;
                 cameraZ += lineOfSightZ * TRANSLATION_SCALE;
-                moveCamera();
+                moveCameraAltitude();
                 break;
             case KeyEvent.VK_DOWN:
-//                cameraZ -= TRANSLATION_SCALE;
                 cameraX -= lineOfSightX * TRANSLATION_SCALE;
                 cameraZ -= lineOfSightZ * TRANSLATION_SCALE;
-                moveCamera();
+                moveCameraAltitude();
                 break;
             case KeyEvent.VK_LEFT:
                 cameraRotationY -= ROTATION_SCALE;
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
-//                System.out.println("left, camera angle = "+ cameraRotationY);
-//                System.out.println("X = " + lineOfSightX + " Z = "+lineOfSightZ);
-//                moveCamera();
                 break;
             case KeyEvent.VK_RIGHT:
                 cameraRotationY += ROTATION_SCALE;
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
-//                System.out.println("right, camera angle = "+ cameraRotationY);
-//                System.out.println("X = " + lineOfSightX + " Z = "+lineOfSightZ);
-//                moveCamera();
                 break;
             default:
                 break;
@@ -132,29 +125,25 @@ public class World extends Application3D implements KeyListener {
 
     }
 
-    private void moveCamera() {
-        if (insideTerrain()) {
-            Point3D cameraPosition = getCameraPositionInTerrain();
-//            System.out.println("Before = " + cameraY);
+    private void moveCameraAltitude() {
+        Point3D cameraPosition = getCameraPositionInTerrain();
+        if (insideTerrain(cameraPosition)) {
             float tempY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
-            if (tempY - cameraY > 0.5f)
-                cameraY += (tempY - cameraY) * 0.25f;
+            // To smoothen transition between altitudes
+            if (tempY - cameraY > TRANSITION_ALTITUDE_THRESHOLD)
+                cameraY += (tempY - cameraY) * TRANSITION_ALTITUDE_SCALE;
             else
                 cameraY = tempY;
-//            cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
-//            System.out.println("After = " + cameraY);
         } else {
             float tempY = MINIMUM_ALTITUDE;
-            if (cameraY - tempY > 0.5f)
-                cameraY -= (cameraY - tempY) * 0.25f;
+            if (cameraY - tempY > TRANSITION_ALTITUDE_THRESHOLD)
+                cameraY -= (cameraY - tempY) * TRANSITION_ALTITUDE_SCALE;
             else
                 cameraY = tempY;
-//            cameraY = MINIMUM_ALTITUDE;
         }
     }
 
-    private boolean insideTerrain() {
-        Point3D cameraPosition = getCameraPositionInTerrain();
+    private boolean insideTerrain(Point3D cameraPosition) {
         return cameraPosition.getX() >= 0 && cameraPosition.getZ() >= 0
                 && cameraPosition.getX() <= terrain.getWidth()-1
                 && cameraPosition.getZ() <= terrain.getDepth()-1;
