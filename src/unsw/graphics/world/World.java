@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.*;
@@ -19,6 +20,9 @@ import unsw.graphics.scene.MathUtil;
  * @author malcolmr
  */
 public class World extends Application3D implements KeyListener {
+
+    private static final boolean USE_TERRAIN_TEXTURE = true;
+    private static final boolean USE_TREE_TEXTURE = true;
 
     private Terrain terrain;
 
@@ -40,6 +44,8 @@ public class World extends Application3D implements KeyListener {
 
     private float lineOfSightX = 1;
     private float lineOfSightZ = 0;
+    private Texture terrainTexture;
+    private Texture treeTexture;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -60,19 +66,57 @@ public class World extends Application3D implements KeyListener {
         world.start();
     }
 
+    @Override
+    public void init(GL3 gl) {
+        super.init(gl);
+        getWindow().addKeyListener(this);
+        terrain.makeTerrain(gl);
+
+        // Initialise textures
+        terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
+        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
+
+        // Initialise shader
+        Shader shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
+                "shaders/fragment_tex_phong_world.glsl");
+        shader.use(gl);
+
+    }
+
 	@Override
 	public void display(GL3 gl) {
 		super.display(gl);
 
-		//camera
+        // Set wrap mode for texture in S direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+
+        // Set wrap mode for texture in T direction
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
+
+        // Set the lighting properties
+        Shader.setPoint3D(gl, "lightPos", terrain.getSunlight().asPoint3D());
+        Shader.setColor(gl, "lightIntensity", Color.WHITE);
+        Shader.setColor(gl, "ambientIntensity", new Color(0.5f, 0.5f, 0.5f));
+
+        // Set the material properties
+        Shader.setColor(gl, "ambientCoeff", Color.WHITE);
+        Shader.setColor(gl, "diffuseCoeff", new Color(0.8f, 0.8f, 0.8f));
+        Shader.setColor(gl, "specularCoeff", new Color(0.2f, 0.2f, 0.2f));
+        Shader.setFloat(gl, "phongExp", 16f);
+
+        //camera
         CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
 
         CoordFrame3D frame = CoordFrame3D.identity();
-        Shader.setPenColor(gl, Color.GRAY);
 
+		// Use Terrain texture and draw Terrain
+		useTexture(gl, terrainTexture);
         terrain.drawTerrain(gl, frame);
 
+        // Use Tree texture and draw Trees
+        useTexture(gl, treeTexture);
+        terrain.drawTrees(gl, frame);
 	}
 
 	@Override
@@ -81,11 +125,11 @@ public class World extends Application3D implements KeyListener {
 
 	}
 
-	@Override
-	public void init(GL3 gl) {
-		super.init(gl);
-        getWindow().addKeyListener(this);
-        terrain.makeTerrain(gl);
+    private void useTexture(GL3 gl, Texture texture) {
+        Shader.setPenColor(gl, Color.WHITE);
+        Shader.setInt(gl, "tex", 0);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, texture.getId());
     }
 
 	@Override

@@ -32,10 +32,6 @@ public class Terrain {
     private Vector3 sunlight;
     private List<TriangleMesh> terrainMeshes =  new ArrayList<>();
 
-    private Shader shader;
-    private Texture terrainTexture;
-    private Texture treeTexture;
-
     /**
      * Create a new terrain
      *
@@ -242,15 +238,6 @@ public class Terrain {
      * @param gl
      */
     public void makeTerrain(GL3 gl) {
-        // Initialise textures
-        terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
-        treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
-
-        // Initialise shader
-        shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
-                "shaders/fragment_tex_phong_world.glsl");
-        shader.use(gl);
-
         List<Point3D> points = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
         List<Point2D> texCoords = new ArrayList<Point2D>();
@@ -310,50 +297,24 @@ public class Terrain {
     }
 
     /**
-     * Draw terrain and its components
+     * Draw terrain
      * @param gl
      * @param frame
      */
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
-
-        // ------- DRAW TERRAIN -------
-        Shader.setPenColor(gl, Color.WHITE);
-        Shader.setInt(gl, "tex", 0);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, terrainTexture.getId());
-
-        // Set wrap mode for texture in S direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
-
-        // Set wrap mode for texture in T direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
-
-        // Set the lighting properties
-        Shader.setPoint3D(gl, "lightPos", sunlight.asPoint3D());
-        Shader.setColor(gl, "lightIntensity", Color.WHITE);
-        Shader.setColor(gl, "ambientIntensity", new Color(0.5f, 0.5f, 0.5f));
-
-        // Set the material properties
-        Shader.setColor(gl, "ambientCoeff", Color.WHITE);
-        Shader.setColor(gl, "diffuseCoeff", new Color(0.8f, 0.8f, 0.8f));
-        Shader.setColor(gl, "specularCoeff", new Color(0.2f, 0.2f, 0.2f));
-        Shader.setFloat(gl, "phongExp", 16f);
-
-        // Draw terrain
         for (TriangleMesh mesh : terrainMeshes)
             mesh.draw(gl, frame);
+    }
 
-        // ------- DRAW TREES -------
-        Shader.setPenColor(gl, Color.WHITE);
-        Shader.setInt(gl, "tex", 0);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, treeTexture.getId());
-
-        // Draw trees
+    /**
+     * Draw trees
+     * @param gl
+     * @param frame
+     */
+    public void drawTrees(GL3 gl, CoordFrame3D frame) {
         for (Tree tree: trees)
             tree.draw(gl, frame);
     }
-
     /**
      * Get width of terrain
      * @return int
