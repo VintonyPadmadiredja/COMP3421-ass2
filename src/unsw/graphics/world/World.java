@@ -23,7 +23,7 @@ public class World extends Application3D implements KeyListener {
 
     private Terrain terrain;
 
-    private final float MINIMUM_ALTITUDE = 1.8f;
+    private final float MINIMUM_ALTITUDE = 1.5f;
     private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
     private final float TRANSITION_ALTITUDE_SCALE = 0.25f;
 
