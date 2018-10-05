@@ -21,9 +21,6 @@ import unsw.graphics.scene.MathUtil;
  */
 public class World extends Application3D implements KeyListener {
 
-    private static final boolean USE_TERRAIN_TEXTURE = true;
-    private static final boolean USE_TREE_TEXTURE = true;
-
     private Terrain terrain;
 
     private final float MINIMUM_ALTITUDE = 1.8f;
@@ -44,6 +41,7 @@ public class World extends Application3D implements KeyListener {
 
     private float lineOfSightX = 1;
     private float lineOfSightZ = 0;
+
     private Texture terrainTexture;
     private Texture treeTexture;
 
@@ -137,7 +135,6 @@ public class World extends Application3D implements KeyListener {
         super.reshape(gl, width, height);
         Shader.setProjMatrix(gl, Matrix4.perspective(60, width/(float)height, 1, 100));
 	}
-
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {

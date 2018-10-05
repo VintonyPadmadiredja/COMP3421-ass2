@@ -1,16 +1,12 @@
 package unsw.graphics.world;
 
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 import unsw.graphics.CoordFrame3D;
-import unsw.graphics.Shader;
-import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
@@ -30,7 +26,7 @@ public class Terrain {
     private List<Tree> trees;
     private List<Road> roads;
     private Vector3 sunlight;
-    private List<TriangleMesh> terrainMeshes =  new ArrayList<>();
+    private TriangleMesh terrainMesh;
 
     /**
      * Create a new terrain
@@ -233,8 +229,7 @@ public class Terrain {
     }
 
     /**
-     * Generate terrain by initialising texutres, shaders and creating terrain mesh
-     * using vertex normals
+     * Generate terrain using a single triangle mesh with vertex normals
      * @param gl
      */
     public void makeTerrain(GL3 gl) {
@@ -285,11 +280,10 @@ public class Terrain {
             }
         }
         
-        TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
-        terrainMeshes.add(segment);
+        terrainMesh = new TriangleMesh(points, indices, true, texCoords);
 
-        // Initialise this segment of terrain
-        segment.init(gl);
+        // Initialise terrain
+        terrainMesh.init(gl);
 
         // Initialise trees
         for (Tree tree : trees)
@@ -302,8 +296,7 @@ public class Terrain {
      * @param frame
      */
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
-        for (TriangleMesh mesh : terrainMeshes)
-            mesh.draw(gl, frame);
+        terrainMesh.draw(gl, frame);
     }
 
     /**
