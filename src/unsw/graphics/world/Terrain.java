@@ -182,7 +182,16 @@ public class Terrain {
         roads.add(road);        
     }
 
-    // (x,z) = point within triangle, p1 = left end, p2 = common point, p3 = right end
+    /**
+     * Perform a billinear interpolation on point (x,z) within triangle
+     * p1 = left end, p2 = common point, p3 = right end of triangle
+     * @param x
+     * @param z
+     * @param p1
+     * @param p2
+     * @param p3
+     * @return double
+     */
     private double bilinearInterpolate(float x, float z, Point3D p1, Point3D p2, Point3D p3) {
         // linear interpolation of z for both lines, p1-p2 and p3-p2
         double alt1 = linearInterpolateZ(z, p1, p2);
@@ -198,26 +207,54 @@ public class Terrain {
         return linearInterpolateX(x, point1, point2);
     }
 
+    /**
+     * Perform a linear interpolation on z
+     * @param z
+     * @param p1
+     * @param p2
+     * @return
+     */
     private double linearInterpolateZ(float z, Point3D p1, Point3D p2) {
         return ((z - p1.getZ()) / (p2.getZ() - p1.getZ())) * p2.getY() +
                 ((p2.getZ() - z) / (p2.getZ() - p1.getZ())) * p1.getY();
     }
 
+    /**
+     * Perform a linear interpolation on x
+     * @param x
+     * @param p1
+     * @param p2
+     * @return double
+     */
     private double linearInterpolateX(float x, Point3D p1, Point3D p2) {
         return ((x - p1.getX()) / (p2.getX() - p1.getX())) * p2.getY() +
                 ((p2.getX() - x) / (p2.getX() - p1.getX())) * p1.getY();
     }
 
+    /**
+     * Get x value from a line given a z value and 2 points
+     * z-z1/x-x1 = z2-z1/x2-x1
+     * x = z-z1/(z2-z1/x2-x1) + x1
+     * @param z
+     * @param x1
+     * @param z1
+     * @param x2
+     * @param z2
+     * @return float
+     */
     private float getXFromLine(float z, float x1, float z1, float x2, float z2) {
         return ( ( ((z - z1) * (x2 - x1)) / (z2 - z1) ) + x1 );
     }
 
+    /**
+     * Generate terrain by initialising texutres, shaders and creating terrain mesh
+     * using vertex normals
+     * @param gl
+     */
     public void makeTerrain(GL3 gl) {
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
-
-        ArrayList<Point2D> texCoords = new ArrayList<Point2D>();
 
         // Initialise shader
         shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
@@ -226,6 +263,7 @@ public class Terrain {
 
         List<Point3D> points = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
+        List<Point2D> texCoords = new ArrayList<Point2D>();
         for (int z = 0; z < depth; z++) {
             for (int x = 0; x < width; x++) {
                 points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
@@ -246,6 +284,8 @@ public class Terrain {
                     Integer i2 = (width * (z - 1)) + 1 + x;
                     Integer i3 = width * (z - 1) + x;
 
+                    // determine which diagonal to take to cut up a tile
+                    // abs(alt(p0) - alt(p2)) > abs(alt(p1) - alt(p3))
                     if (Math.abs(getGridAltitude(x, z) - getGridAltitude(x + 1, z - 1)) >
                         Math.abs(getGridAltitude(x + 1, z) - getGridAltitude(x, z - 1))) {
 
@@ -265,7 +305,6 @@ public class Terrain {
                 }
             }
         }
-        System.out.println("Length of indices = " + indices.size() + " Length of texCoords = " + texCoords.size());
         TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
         segment.init(gl);
         terrainMeshes.add(segment);
@@ -274,6 +313,11 @@ public class Terrain {
             tree.init(gl);
     }
 
+    /**
+     * Draw terrain and its components
+     * @param gl
+     * @param frame
+     */
     public void drawTerrain(GL3 gl, CoordFrame3D frame) {
 
         // ------- DRAW TERRAIN -------
@@ -314,10 +358,18 @@ public class Terrain {
             tree.draw(gl, frame);
     }
 
+    /**
+     * Get width of terrain
+     * @return int
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Get depth of terrain
+     * @return
+     */
     public int getDepth() {
         return depth;
     }
