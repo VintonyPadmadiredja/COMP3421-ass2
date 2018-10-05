@@ -132,18 +132,17 @@ public class World extends Application3D implements KeyListener {
     }
 
     private void moveCamera() {
-        if (insideTerrain()) {
-            Point3D cameraPosition = getCameraPositionInTerrain();
+        Point3D cameraPosition = getCameraPositionInTerrain();
+        if (insideTerrain(cameraPosition)) {
             cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
         } else {
 //            Point3D closestPoint = clipPoint(getCameraPositionInTerrain());
 
-            cameraY = MINIMUM_ALTITUDE;
+            cameraY = clipPoint(cameraPosition).getY() + MINIMUM_ALTITUDE;
         }
     }
 
-    private boolean insideTerrain() {
-        Point3D cameraPosition = getCameraPositionInTerrain();
+    private boolean insideTerrain(Point3D cameraPosition) {
         return cameraPosition.getX() >= 0 && cameraPosition.getZ() >= 0
                 && cameraPosition.getX() <= terrain.getWidth()-1
                 && cameraPosition.getZ() <= terrain.getDepth()-1;
@@ -169,10 +168,11 @@ public class World extends Application3D implements KeyListener {
         float xMin = 0;
         float a1X = xMin;
         float a1Z = p.getZ() + (xMin - p.getX()) * ((midpoint.getZ() - p.getZ()) / (midpoint.getX() - p.getX()));
-
+        System.out.println("a1Z = " + a1Z);
         float zMin = 0;
         float a2Z = zMin;
-        float a2X = a1X + (zMin - a1Z) * ((midpoint.getZ() - a1Z) / (midpoint.getX() - a1X));
+        float a2X = a1X + (zMin - a1Z) * ((midpoint.getX() - a1X) / (midpoint.getZ() - a1Z));
+        System.out.println("a2X = " + a2X);
 
         return new Point3D(a2X, terrain.altitude(a2X, a2Z), a2Z);
     }
