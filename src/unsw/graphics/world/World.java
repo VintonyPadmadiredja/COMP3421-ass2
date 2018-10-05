@@ -129,6 +129,11 @@ public class World extends Application3D implements KeyListener {
 		treeTexture.destroy(gl);
 	}
 
+    /**
+     * Change which texture to use for rendering from now onwards
+     * @param gl
+     * @param texture - New texture to use
+     */
     private void useTexture(GL3 gl, Texture texture) {
         Shader.setPenColor(gl, Color.WHITE);
         Shader.setInt(gl, "tex", 0);
