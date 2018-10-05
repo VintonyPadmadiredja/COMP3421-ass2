@@ -37,13 +37,12 @@ public class World extends Application3D implements KeyListener {
     private float terrainScale = 1;
     private Point3D terrainTranslation = new Point3D(0, 0, 0);
 
-    private float lineOfSightX = 0;
-    private float lineOfSightZ = -1;
+    private float lineOfSightX = 1;
+    private float lineOfSightZ = 0;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
-
     }
 
     /**
@@ -137,6 +136,8 @@ public class World extends Application3D implements KeyListener {
             Point3D cameraPosition = getCameraPositionInTerrain();
             cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
         } else {
+//            Point3D closestPoint = clipPoint(getCameraPositionInTerrain());
+
             cameraY = MINIMUM_ALTITUDE;
         }
     }
@@ -159,6 +160,21 @@ public class World extends Application3D implements KeyListener {
                 .multiply(Matrix4.rotationY(-terrainRotationY))
                 .multiply(Matrix4.translation(-terrainTranslation.getX(), -terrainTranslation.getY(),
                         -terrainTranslation.getZ()));
+    }
+
+    private Point3D clipPoint(Point3D p) {
+        //y is irrelevant here
+        Point3D midpoint = new Point3D(terrain.getWidth()/2, 0, terrain.getDepth()/2);
+
+        float xMin = 0;
+        float a1X = xMin;
+        float a1Z = p.getZ() + (xMin - p.getX()) * ((midpoint.getZ() - p.getZ()) / (midpoint.getX() - p.getX()));
+
+        float zMin = 0;
+        float a2Z = zMin;
+        float a2X = a1X + (zMin - a1Z) * ((midpoint.getZ() - a1Z) / (midpoint.getX() - a1X));
+
+        return new Point3D(a2X, terrain.altitude(a2X, a2Z), a2Z);
     }
 
     @Override
