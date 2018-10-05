@@ -102,11 +102,13 @@ public class World extends Application3D implements KeyListener {
         Shader.setColor(gl, "specularCoeff", new Color(0.2f, 0.2f, 0.2f));
         Shader.setFloat(gl, "phongExp", 16f);
 
-        //camera
+        // Camera
         CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
 
-        CoordFrame3D frame = CoordFrame3D.identity();
+        // Terrain coordinate frame
+        CoordFrame3D frame = CoordFrame3D.identity().translate(terrainTranslation).rotateY(terrainRotationY)
+                .scale(terrainScale, terrainScale, terrainScale);
 
 		// Use Terrain texture and draw Terrain
 		useTexture(gl, terrainTexture);
