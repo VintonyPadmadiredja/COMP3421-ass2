@@ -120,7 +120,8 @@ public class World extends Application3D implements KeyListener {
 	@Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
-        terrain.destroy(gl);
+        terrain.destroyTrees(gl);
+        terrain.destroyTerrain(gl);
 		terrainTexture.destroy(gl);
 		treeTexture.destroy(gl);
 	}
