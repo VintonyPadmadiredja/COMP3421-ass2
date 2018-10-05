@@ -1,16 +1,13 @@
 package unsw.graphics.world;
 
 
-
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
-import javafx.beans.binding.IntegerBinding;
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Shader;
 import unsw.graphics.Texture;
@@ -27,7 +24,6 @@ import unsw.graphics.geometry.TriangleMesh;
  */
 public class Terrain {
 
-    private static final int NUM_SLICES = 32;
     private int width;
     private int depth;
     private float[][] altitudes;
@@ -112,7 +108,6 @@ public class Terrain {
      */
     public float altitude(float x, float z) {
         float altitude = 0;
-//        System.out.println(x + " " + z);
         // TODO: Implement this
         int lowerBoundX = (int) Math.floor(x);
         int upperBoundX = lowerBoundX + 1; // can't do ceil in the case when x,z is a whole number
@@ -120,13 +115,9 @@ public class Terrain {
         int upperBoundZ = lowerBoundZ + 1;
 
         Point3D p0 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
-//        System.out.format("p0 = %d, %d, %d\n", upperBoundX, (int) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p1 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
-//        System.out.format("p1 = %d, %d, %d\n", lowerBoundX, (int)getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p2 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
-//        System.out.format("p2 = %d, %d, %d\n", lowerBoundX, (int)getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
         Point3D p3 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
-//        System.out.format("p3 = %d, %d, %d\n", upperBoundX, (int)getGridAltitude(upperBoundX, upperBoundZ), upperBoundZ);
 
         // test point is above or below a line
         // p1      p0
@@ -145,7 +136,6 @@ public class Terrain {
         // == 0 on the line
 
         float f_value = 2 * (x - p0.getX()) + 2 * (z - p0.getZ());
-//        System.out.println(f_value);
         if (f_value < 0) {
             altitude = (float) bilinearInterpolate(x, z, p1, p2, p0);
         } else if (f_value > 0) {
@@ -229,6 +219,8 @@ public class Terrain {
         for (int z = 0; z < depth; z++) {
             for (int x = 0; x < width; x++) {
                 points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
+
+                // Add current vertex in terrain as a texture coordinate
                 texCoords.add(new Point2D(x, z));
 
                 //      p3      p2
@@ -265,11 +257,14 @@ public class Terrain {
                 }
             }
         }
-        System.out.println("Length of indices = " + indices.size() + " Length of texCoords = " + texCoords.size());
+
         TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
-        segment.init(gl);
         terrainMeshes.add(segment);
 
+        // Initialise this segment of terrain
+        segment.init(gl);
+
+        // Initialise trees
         for (Tree tree : trees)
             tree.init(gl);
     }
