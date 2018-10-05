@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.*;
@@ -64,8 +63,7 @@ public class World extends Application3D implements KeyListener {
 		//camera
         CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
         Shader.setViewMatrix(gl, view.getMatrix());
-//        System.out.println("x = " + cameraX +" y = " + cameraY + " z = " + cameraZ);
-        
+
         CoordFrame3D frame = CoordFrame3D.identity();
         Shader.setPenColor(gl, Color.GRAY);
 
@@ -98,32 +96,24 @@ public class World extends Application3D implements KeyListener {
         switch (keyEvent.getKeyCode()) {
 
             case KeyEvent.VK_UP:
-//                cameraZ += TRANSLATION_SCALE;
                 cameraX += lineOfSightX * TRANSLATION_SCALE;
                 cameraZ += lineOfSightZ * TRANSLATION_SCALE;
-                moveCamera();
+                moveCameraAltitude();
                 break;
             case KeyEvent.VK_DOWN:
-//                cameraZ -= TRANSLATION_SCALE;
                 cameraX -= lineOfSightX * TRANSLATION_SCALE;
                 cameraZ -= lineOfSightZ * TRANSLATION_SCALE;
-                moveCamera();
+                moveCameraAltitude();
                 break;
             case KeyEvent.VK_LEFT:
                 cameraRotationY -= ROTATION_SCALE;
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
-//                System.out.println("left, camera angle = "+ cameraRotationY);
-//                System.out.println("X = " + lineOfSightX + " Z = "+lineOfSightZ);
-//                moveCamera();
                 break;
             case KeyEvent.VK_RIGHT:
                 cameraRotationY += ROTATION_SCALE;
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
-//                System.out.println("right, camera angle = "+ cameraRotationY);
-//                System.out.println("X = " + lineOfSightX + " Z = "+lineOfSightZ);
-//                moveCamera();
                 break;
             default:
                 break;
@@ -131,14 +121,20 @@ public class World extends Application3D implements KeyListener {
 
     }
 
-    private void moveCamera() {
+    private void moveCameraAltitude() {
         Point3D cameraPosition = getCameraPositionInTerrain();
         if (insideTerrain(cameraPosition)) {
-            cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
+            float tempY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
+            if (tempY - cameraY > 0.5f)
+                cameraY += (tempY - cameraY) * 0.25f;
+            else
+                cameraY = tempY;
         } else {
-//            Point3D closestPoint = clipPoint(getCameraPositionInTerrain());
-
-            cameraY = clipPoint(cameraPosition).getY() + MINIMUM_ALTITUDE;
+            float tempY = MINIMUM_ALTITUDE;
+            if (cameraY - tempY > 0.5f)
+                cameraY -= (cameraY - tempY) * 0.25f;
+            else
+                cameraY = tempY;
         }
     }
 
@@ -159,22 +155,6 @@ public class World extends Application3D implements KeyListener {
                 .multiply(Matrix4.rotationY(-terrainRotationY))
                 .multiply(Matrix4.translation(-terrainTranslation.getX(), -terrainTranslation.getY(),
                         -terrainTranslation.getZ()));
-    }
-
-    private Point3D clipPoint(Point3D p) {
-        //y is irrelevant here
-        Point3D midpoint = new Point3D(terrain.getWidth()/2, 0, terrain.getDepth()/2);
-
-        float xMin = 0;
-        float a1X = xMin;
-        float a1Z = p.getZ() + (xMin - p.getX()) * ((midpoint.getZ() - p.getZ()) / (midpoint.getX() - p.getX()));
-        System.out.println("a1Z = " + a1Z);
-        float zMin = 0;
-        float a2Z = zMin;
-        float a2X = a1X + (zMin - a1Z) * ((midpoint.getX() - a1X) / (midpoint.getZ() - a1Z));
-        System.out.println("a2X = " + a2X);
-
-        return new Point3D(a2X, terrain.altitude(a2X, a2Z), a2Z);
     }
 
     @Override
