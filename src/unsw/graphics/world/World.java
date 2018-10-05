@@ -135,9 +135,21 @@ public class World extends Application3D implements KeyListener {
     private void moveCamera() {
         if (insideTerrain()) {
             Point3D cameraPosition = getCameraPositionInTerrain();
-            cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
+//            System.out.println("Before = " + cameraY);
+            float tempY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
+            if (tempY - cameraY > 0.5f)
+                cameraY += (tempY - cameraY) * 0.25f;
+            else
+                cameraY = tempY;
+//            cameraY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
+//            System.out.println("After = " + cameraY);
         } else {
-            cameraY = MINIMUM_ALTITUDE;
+            float tempY = MINIMUM_ALTITUDE;
+            if (cameraY - tempY > 0.5f)
+                cameraY -= (cameraY - tempY) * 0.25f;
+            else
+                cameraY = tempY;
+//            cameraY = MINIMUM_ALTITUDE;
         }
     }
 
