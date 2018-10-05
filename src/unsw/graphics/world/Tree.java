@@ -15,18 +15,27 @@ import java.io.IOException;
 public class Tree {
 
     private TriangleMesh tree;
-    private static final float SCALE_FACTOR = 0.2f;
-    private static final float ALTITUDE_OFFSET = 0.9f;
-    private static final float Z_OFFSET = 0.125f;
+    private static final float MODEL_SCALE_FACTOR = 0.2f;
+    private static final float MODEL_ALTITUDE_OFFSET = 0.9f;
+    private static final float MODEL_Z_OFFSET = 0.125f;
     private Point3D position;
 
-
+    /**
+     * Create a new Tree
+     * @param x - The position of tree in the x-direction
+     * @param y - The position of tree in the y-direction
+     * @param z - The position of tree in the z-direction
+     */
     public Tree(float x, float y, float z) {
-        y = y + ALTITUDE_OFFSET;
-        z = z + Z_OFFSET;
+        y = y + MODEL_ALTITUDE_OFFSET;
+        z = z + MODEL_Z_OFFSET;
         position = new Point3D(x, y, z);
     }
 
+    /**
+     * Generate tree
+     * @param gl
+     */
     public void init(GL3 gl) {
         try {
             // Initialise tree model
@@ -38,16 +47,25 @@ public class Tree {
         }
     }
 
+    /**
+     *
+     * @param gl
+     * @param frame
+     */
     public void draw(GL3 gl, CoordFrame3D frame) {
         // Create new tree's frame, extending from Terrain's frame
         CoordFrame3D treeFrame = frame
                 .translate(position)
-                .scale(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
+                .scale(MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR);
 
         // Draw the tree's meshes
         tree.draw(gl, treeFrame);
     }
 
+    /**
+     * Get position of the tree
+     * @return Point3D - Position of tree
+     */
     public Point3D getPosition() {
         return position;
     }
