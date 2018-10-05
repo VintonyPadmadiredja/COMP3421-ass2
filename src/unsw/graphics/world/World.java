@@ -23,6 +23,8 @@ public class World extends Application3D implements KeyListener {
     private Terrain terrain;
 
     private final float MINIMUM_ALTITUDE = 1.8f;
+    private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
+    private final float TRANSITION_ALTITUDE_SCALE = 0.25f;
 
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
@@ -42,6 +44,8 @@ public class World extends Application3D implements KeyListener {
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
+
+        cameraY += (float) terrain.getGridAltitude(0, 0);
     }
 
     /**
@@ -125,14 +129,15 @@ public class World extends Application3D implements KeyListener {
         Point3D cameraPosition = getCameraPositionInTerrain();
         if (insideTerrain(cameraPosition)) {
             float tempY = terrain.altitude(cameraPosition.getX(), cameraPosition.getZ()) + MINIMUM_ALTITUDE;
-            if (tempY - cameraY > 0.5f)
-                cameraY += (tempY - cameraY) * 0.25f;
+            // To smoothen transition between altitudes
+            if (tempY - cameraY > TRANSITION_ALTITUDE_THRESHOLD)
+                cameraY += (tempY - cameraY) * TRANSITION_ALTITUDE_SCALE;
             else
                 cameraY = tempY;
         } else {
             float tempY = MINIMUM_ALTITUDE;
-            if (cameraY - tempY > 0.5f)
-                cameraY -= (cameraY - tempY) * 0.25f;
+            if (cameraY - tempY > TRANSITION_ALTITUDE_THRESHOLD)
+                cameraY -= (cameraY - tempY) * TRANSITION_ALTITUDE_SCALE;
             else
                 cameraY = tempY;
         }
