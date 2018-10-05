@@ -311,20 +311,14 @@ public class Terrain {
 
 
     /**
-     * Destroy Terrain object
+     * Destroy Terrain and all objects within it
      * @param gl
      */
     public void destroy(GL3 gl){
-        this.destroy(gl);
-    }
-
-    /**
-     * Destroy all tree objects
-     * @param gl
-     */
-    public void destroyTrees(GL3 gl){
         for (Tree tree: trees)
             tree.destroy(gl);
+
+        terrainMesh.destroy(gl);
     }
 
     /**
