@@ -69,6 +69,13 @@ public class Tree {
     public Point3D getPosition() {
         return position;
     }
-    
+
+    /**
+     * Destroy tree object
+     * @param gl
+     */
+    public void destroy(GL3 gl) {
+        tree.destroy(gl);
+    }
 
 }
