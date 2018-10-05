@@ -245,6 +245,8 @@ public class Terrain {
         for (int z = 0; z < depth; z++) {
             for (int x = 0; x < width; x++) {
                 points.add(new Point3D(x, (float) getGridAltitude(x, z), z));
+                texCoords.add(new Point2D(x, z));
+
                 //      p3      p2
                 //        ------
                 //        |   /|
@@ -254,16 +256,27 @@ public class Terrain {
                 //        ------
                 //      p0      p1
 
+                // i0 = (0,0)
+                // i1 = (1,0)
+                // i2 = (1,1)
+                // i3 = (0,1)
+
+//                Point2D point0 = new Point2D(0,0);
+//                Point2D point1 = new Point2D(1, 0);
+//                Point2D point2 = new Point2D(1,1);
+//                Point2D point3 = new Point2D(0,1);
+
+
                 if (z > 0 && x < (width - 1)) {
                     Integer i0 = width * z + x;
                     Integer i1 = (width * z) + 1 + x;
                     Integer i2 = (width * (z - 1)) + 1 + x;
                     Integer i3 = width * (z - 1) + x;
 
-                    texCoords.add(new Point2D(0,0));
-                    texCoords.add(new Point2D(0,1));
-                    texCoords.add(new Point2D(1,1));
-                    texCoords.add(new Point2D(1,0));
+//                    texCoords.add(new Point2D(0,0));
+//                    texCoords.add(new Point2D(0.5f,1));
+//                    texCoords.add(new Point2D(1,0));
+//                    texCoords.add(new Point2D(0,1));
 
                     if (Math.abs(getGridAltitude(x, z) - getGridAltitude(x + 1, z - 1)) >
                         Math.abs(getGridAltitude(x + 1, z) - getGridAltitude(x, z - 1))) {
@@ -274,6 +287,17 @@ public class Terrain {
                         indices.add(i0);
                         indices.add(i2);
                         indices.add(i3);
+
+//                        // Triangle 1
+//                        texCoords.add(point0);
+//                        texCoords.add(point1);
+//                        texCoords.add(point2);
+//
+//                        // Triangle 2
+//                        texCoords.add(point0);
+//                        texCoords.add(point2);
+//                        texCoords.add(point3);
+
                     } else {
                         indices.add(i1);
                         indices.add(i3);
@@ -282,10 +306,21 @@ public class Terrain {
                         indices.add(i1);
                         indices.add(i2);
                         indices.add(i3);
+
+//                        // Triangle 1
+//                        texCoords.add(point1);
+//                        texCoords.add(point3);
+//                        texCoords.add(point0);
+//
+//                        // Triangle 2
+//                        texCoords.add(point1);
+//                        texCoords.add(point2);
+//                        texCoords.add(point3);
                     }
                 }
             }
         }
+        System.out.println("Length of indices = " + indices.size() + " Length of texCoords = " + texCoords.size());
         TriangleMesh segment = new TriangleMesh(points, indices, true, texCoords);
         segment.init(gl);
         terrainMeshes.add(segment);
@@ -371,10 +406,10 @@ public class Terrain {
 //        Shader.setViewMatrix(gl, frame.getMatrix());
 
         // Set wrap mode for texture in S direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_MIRRORED_REPEAT);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 
         // Set wrap mode for texture in T direction
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_MIRRORED_REPEAT);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
 
         // Set the lighting properties
         Shader.setPoint3D(gl, "lightPos", sunlight.asPoint3D());
