@@ -16,7 +16,7 @@ public class Tree {
 
     private TriangleMesh tree;
     private static final float SCALE_FACTOR = 0.2f;
-    private static final float ALTITUDE_OFFSET = 1f;
+    private static final float ALTITUDE_OFFSET = 0.9f;
     private static final float Z_OFFSET = 0.125f;
     private Point3D position;
 
