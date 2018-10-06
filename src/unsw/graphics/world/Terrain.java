@@ -122,7 +122,7 @@ public class Terrain {
         // p2      p3
         // Z increases down, so this slope is decreasing
         // m = 1/-1 = -1
-        // f = 2h(x − x0) + 2w(z − z0) //h == w == 1
+        // f = 2h(x - x0) + 2w(z - z0) //h == w == 1
         // < 0 below the line
         // > 0 above the line
         // == 0 on the line
