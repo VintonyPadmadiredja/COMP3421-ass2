@@ -2,7 +2,10 @@ package unsw.graphics.world;
 
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+import unsw.graphics.CoordFrame3D;
 import unsw.graphics.geometry.Point2D;
+import unsw.graphics.geometry.TriangleMesh;
 
 /**
  * COMMENT: Comment Road 
@@ -13,6 +16,7 @@ public class Road {
 
     private List<Point2D> points;
     private float width;
+    private TriangleMesh road;
     
     /**
      * Create a new road with the specified spine 
@@ -23,6 +27,20 @@ public class Road {
     public Road(float width, List<Point2D> spine) {
         this.width = width;
         this.points = spine;
+    }
+
+    public void init(GL3 gl){
+//        road = new TriangleMesh(points);
+        road.init(gl);
+    }
+
+    public void draw(GL3 gl, CoordFrame3D frame){
+        CoordFrame3D roadFrame = frame;
+        road.draw(gl, roadFrame);
+    }
+
+    public void destroy(GL3 gl) {
+        road.destroy(gl);
     }
 
     /**

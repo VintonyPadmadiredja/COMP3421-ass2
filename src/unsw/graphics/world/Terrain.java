@@ -288,6 +288,10 @@ public class Terrain {
         // Initialise trees
         for (Tree tree : trees)
             tree.init(gl);
+
+        // Initialise roads
+        for (Road road : roads)
+            road.init(gl);
     }
 
     /**
@@ -309,6 +313,16 @@ public class Terrain {
             tree.draw(gl, frame);
     }
 
+    /**
+     * Draw roads
+     * @param gl
+     * @param frame
+     */
+    public void drawRoads(GL3 gl, CoordFrame3D frame) {
+        for (Road road: roads)
+            road.draw(gl, frame);
+    }
+
 
     /**
      * Destroy Terrain object
@@ -325,6 +339,15 @@ public class Terrain {
     public void destroyTrees(GL3 gl) {
         for (Tree tree: trees)
             tree.destroy(gl);
+    }
+
+    /**
+     * Destroy all Tree objects
+     * @param gl
+     */
+    public void destroyRoads(GL3 gl) {
+        for (Road road: roads)
+            road.destroy(gl);
     }
 
     /**

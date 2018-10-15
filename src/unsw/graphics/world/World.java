@@ -44,6 +44,7 @@ public class World extends Application3D implements KeyListener {
 
     private Texture terrainTexture;
     private Texture treeTexture;
+    private Texture roadTexture;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -73,6 +74,7 @@ public class World extends Application3D implements KeyListener {
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
+        roadTexture = new Texture(gl, "res/textures/road.jpg", "jpg", true);
 
         // Initialise shader
         Shader shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
@@ -117,15 +119,21 @@ public class World extends Application3D implements KeyListener {
         // Use Tree texture and draw Trees
         useTexture(gl, treeTexture);
         terrain.drawTrees(gl, frame);
+
+        // Use Road texture and draw Roads
+        useTexture(gl, roadTexture);
+        terrain.drawRoads(gl, frame);
 	}
 
 	@Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
+		terrain.destroyRoads(gl);
         terrain.destroyTrees(gl);
         terrain.destroyTerrain(gl);
 		terrainTexture.destroy(gl);
 		treeTexture.destroy(gl);
+		roadTexture.destroy(gl);
 	}
 
     /**
