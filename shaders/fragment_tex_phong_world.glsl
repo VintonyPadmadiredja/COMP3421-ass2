@@ -65,7 +65,6 @@ void main()
             float distance =  length(vec4(cameraPos, 1) - viewPosition);
             float attenuation = 1.0/(constant + (linear * distance) + (quadratic * distance * distance));
 
-//            ambient *= attenuation;
             diffuse = max(lightIntensity*torchDiffuseCoeff*theta, 0.0);
             diffuse *= attenuation;
             ambientAndDiffuse = vec4(ambient + diffuse, 1);
