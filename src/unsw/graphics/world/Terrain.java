@@ -160,7 +160,7 @@ public class Terrain {
      * @param z
      */
     public void addRoad(float width, List<Point2D> spine) {
-        Road road = new Road(width, spine);
+        Road road = new Road(width, spine, this);
         roads.add(road);        
     }
 
@@ -290,8 +290,8 @@ public class Terrain {
             tree.init(gl);
 
         // Initialise roads
-        for (Road road : roads)
-            road.init(gl);
+//        for (Road road : roads)
+//            road.init(gl);
     }
 
     /**
@@ -319,8 +319,8 @@ public class Terrain {
      * @param frame
      */
     public void drawRoads(GL3 gl, CoordFrame3D frame) {
-        for (Road road: roads)
-            road.draw(gl, frame);
+//        for (Road road: roads)
+//            road.draw(gl, frame);
     }
 
 
@@ -346,8 +346,8 @@ public class Terrain {
      * @param gl
      */
     public void destroyRoads(GL3 gl) {
-        for (Road road: roads)
-            road.destroy(gl);
+//        for (Road road: roads)
+//            road.destroy(gl);
     }
 
     /**
