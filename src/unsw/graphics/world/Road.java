@@ -253,10 +253,6 @@ public class Road {
         road.init(gl);
     }
 
-    public void calculateBezierPoints(){
-
-    }
-
     public void draw(GL3 gl, CoordFrame3D frame){
         CoordFrame3D roadFrame = frame;
         road.draw(gl, roadFrame);
