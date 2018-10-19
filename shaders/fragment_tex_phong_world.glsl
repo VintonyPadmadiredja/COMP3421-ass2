@@ -23,6 +23,15 @@ in vec3 m;
 
 in vec2 texCoordFrag;
 
+// torch properties
+uniform float torchEnabled;
+uniform float cutoff;
+uniform float attenuation;
+uniform float spotExp;
+uniform vec3 cameraPos;
+uniform vec3 torchDiffuseCoeff;
+uniform vec3 torchSpecularCoeff;
+
 void main()
 {
     // Compute the s, v and r vectors
@@ -42,5 +51,16 @@ void main()
 
     vec4 ambientAndDiffuse = vec4(ambient + diffuse, 1);
 
+    if (torchEnabled == 1) {
+        // Spot direction
+        vec3 spotS = normalize(view_matrix*vec4(cameraPos, 1) - viewPosition).xyz;
+        // theta - angle between Spot Direction and Light direction
+        float theta = dot(-spotS, vec3(0, 0, -1));
+        if(theta > cos(radians(cutoff))){
+            diffuse = max(lightIntensity*torchDiffuseCoeff*theta, 0.0);
+            ambientAndDiffuse = vec4(ambient + diffuse, 1);
+            specular = max(lightIntensity*torchSpecularCoeff*pow(theta, spotExp), 0.0);
+        }
+    }
     outputColor = ambientAndDiffuse*input_color*texture(tex, texCoordFrag) + vec4(specular, 1);
 }

@@ -123,6 +123,17 @@ public class World extends Application3D implements KeyListener {
         Shader.setColor(gl, "specularCoeff", specularCoeff);
         Shader.setFloat(gl, "phongExp", 16f);
 
+        if (nightTime) {
+            Shader.setFloat(gl, "torchEnabled", 1f);
+            Shader.setColor(gl, "torchDiffuseCoeff", new Color(0.5f, 0.5f, 0.5f));
+            Shader.setColor(gl, "torchSpecularCoeff", new Color(0.2f, 0.2f, 0.2f));
+            Shader.setPoint3D(gl, "cameraPos", new Point3D(cameraX, cameraY, cameraZ));
+            Shader.setFloat(gl, "cutoff", 12.5f);
+            Shader.setFloat(gl, "spotExp", 64f);
+        } else {
+            Shader.setFloat(gl, "torchEnabled", 0f);
+        }
+
         // Camera
         CoordFrame3D view;
         if (avatarView) {
