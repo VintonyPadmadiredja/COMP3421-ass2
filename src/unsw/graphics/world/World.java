@@ -22,6 +22,7 @@ import unsw.graphics.scene.MathUtil;
 public class World extends Application3D implements KeyListener {
 
     private Terrain terrain;
+    private Avatar avatar;
 
     private final float MINIMUM_ALTITUDE = 1.5f;
     private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
@@ -29,6 +30,11 @@ public class World extends Application3D implements KeyListener {
 
     private final float ROTATION_SCALE = 2f;
     private final float TRANSLATION_SCALE = 0.2f;
+
+    private final float AVATAR_ROTATION_SCALE = 5f;
+
+    private final float CAMERA_UP = 1;
+    private final float CAMERA_BACK = 5;
 
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
@@ -44,10 +50,15 @@ public class World extends Application3D implements KeyListener {
 
     private Texture terrainTexture;
     private Texture treeTexture;
+    private Texture avatarTexture;
+
+    private boolean avatarView; //False == Third person view
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
+        this.avatar = new Avatar();
+        this.avatarView = false;
 
         cameraY += (float) terrain.getGridAltitude(0, 0);
     }
@@ -69,10 +80,12 @@ public class World extends Application3D implements KeyListener {
         super.init(gl);
         getWindow().addKeyListener(this);
         terrain.makeTerrain(gl);
+        avatar.init(gl);
 
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
+        avatarTexture = new Texture(gl, "res/textures/BrightPurpleMarble.png", "png", false);
 
         // Initialise shader
         Shader shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
@@ -103,7 +116,14 @@ public class World extends Application3D implements KeyListener {
         Shader.setFloat(gl, "phongExp", 16f);
 
         // Camera
-        CoordFrame3D view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
+        CoordFrame3D view;
+        if (avatarView) {
+            view = CoordFrame3D.identity().rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
+        } else {
+            view = CoordFrame3D.identity().translate(0, -CAMERA_UP, -CAMERA_BACK)
+                    .rotateY(cameraRotationY).translate(-cameraX, -cameraY, -cameraZ);
+        }
+
         Shader.setViewMatrix(gl, view.getMatrix());
 
         // Terrain coordinate frame
@@ -117,6 +137,10 @@ public class World extends Application3D implements KeyListener {
         // Use Tree texture and draw Trees
         useTexture(gl, treeTexture);
         terrain.drawTrees(gl, frame);
+
+        // Use Avatar texture and draw Avatar
+        useTexture(gl, avatarTexture);
+        avatar.draw(gl,frame);
 	}
 
 	@Override
@@ -150,24 +174,35 @@ public class World extends Application3D implements KeyListener {
     public void keyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getKeyCode()) {
             case KeyEvent.VK_UP:
+                // move camera's position up
                 cameraX += lineOfSightX * TRANSLATION_SCALE;
                 cameraZ += lineOfSightZ * TRANSLATION_SCALE;
                 updateCameraAltitude();
+                // set avatar's position to camera's position
+                avatar.updatePosition(cameraX, cameraY - MINIMUM_ALTITUDE, cameraZ);
                 break;
             case KeyEvent.VK_DOWN:
+                // move camera's position down
                 cameraX -= lineOfSightX * TRANSLATION_SCALE;
                 cameraZ -= lineOfSightZ * TRANSLATION_SCALE;
                 updateCameraAltitude();
+                // set avatar's position to camera's position
+                avatar.updatePosition(cameraX, cameraY - MINIMUM_ALTITUDE, cameraZ);
                 break;
             case KeyEvent.VK_LEFT:
                 cameraRotationY -= ROTATION_SCALE;
+                avatar.rotate(ROTATION_SCALE);
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 break;
             case KeyEvent.VK_RIGHT:
                 cameraRotationY += ROTATION_SCALE;
+                avatar.rotate(-ROTATION_SCALE);
                 lineOfSightX = (float) Math.sin(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
                 lineOfSightZ = (float) -Math.cos(Math.toRadians(MathUtil.normaliseAngle(cameraRotationY)));
+                break;
+            case KeyEvent.VK_A:
+                avatarView = !avatarView;
                 break;
             default:
                 break;
