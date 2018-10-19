@@ -130,6 +130,9 @@ public class World extends Application3D implements KeyListener {
             Shader.setPoint3D(gl, "cameraPos", new Point3D(cameraX, cameraY, cameraZ));
             Shader.setFloat(gl, "cutoff", 12.5f);
             Shader.setFloat(gl, "spotExp", 64f);
+            Shader.setFloat(gl, "constant", 1f);
+            Shader.setFloat(gl, "linear", 0.05f);
+            Shader.setFloat(gl, "quadratic", 0.01f);
         } else {
             Shader.setFloat(gl, "torchEnabled", 0f);
         }

@@ -26,11 +26,15 @@ in vec2 texCoordFrag;
 // torch properties
 uniform float torchEnabled;
 uniform float cutoff;
-uniform float attenuation;
 uniform float spotExp;
 uniform vec3 cameraPos;
 uniform vec3 torchDiffuseCoeff;
 uniform vec3 torchSpecularCoeff;
+
+// distance attenuation properties
+uniform float constant;
+uniform float linear;
+uniform float quadratic;
 
 void main()
 {
@@ -57,9 +61,16 @@ void main()
         // theta - angle between Spot Direction and Light direction
         float theta = dot(-spotS, vec3(0, 0, -1));
         if(theta > cos(radians(cutoff))){
+            // calculate distance attenuation
+            float distance =  length(vec4(cameraPos, 1) - viewPosition);
+            float attenuation = 1.0/(constant + (linear * distance) + (quadratic * distance * distance));
+
+//            ambient *= attenuation;
             diffuse = max(lightIntensity*torchDiffuseCoeff*theta, 0.0);
+            diffuse *= attenuation;
             ambientAndDiffuse = vec4(ambient + diffuse, 1);
             specular = max(lightIntensity*torchSpecularCoeff*pow(theta, spotExp), 0.0);
+            specular *= attenuation;
         }
     }
     outputColor = ambientAndDiffuse*input_color*texture(tex, texCoordFrag) + vec4(specular, 1);
