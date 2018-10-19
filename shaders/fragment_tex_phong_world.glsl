@@ -30,6 +30,7 @@ uniform float spotExp;
 uniform vec3 cameraPos;
 uniform vec3 torchDiffuseCoeff;
 uniform vec3 torchSpecularCoeff;
+uniform vec3 torchLightDirection;
 
 // distance attenuation properties
 uniform float constant;
@@ -59,7 +60,7 @@ void main()
         // Spot direction
         vec3 spotS = normalize(view_matrix*vec4(cameraPos, 1) - viewPosition).xyz;
         // theta - angle between Spot Direction and Light direction
-        float theta = dot(-spotS, vec3(0, 0, -1));
+        float theta = dot(-spotS, torchLightDirection);
         if(theta > cos(radians(cutoff))){
             // calculate distance attenuation
             float distance =  length(vec4(cameraPos, 1) - viewPosition);
