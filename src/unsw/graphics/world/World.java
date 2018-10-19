@@ -51,6 +51,7 @@ public class World extends Application3D implements KeyListener {
     private Texture terrainTexture;
     private Texture treeTexture;
     private Texture avatarTexture;
+    private Texture roadTexture;
 
     private boolean avatarView; //False == Third person view
 
@@ -86,6 +87,7 @@ public class World extends Application3D implements KeyListener {
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
         avatarTexture = new Texture(gl, "res/textures/BrightPurpleMarble.png", "png", false);
+        roadTexture = new Texture(gl, "res/textures/road.jpg", "jpg", true);
 
         // Initialise shader
         Shader shader = new Shader(gl, "shaders/vertex_tex_phong_world.glsl",
@@ -141,15 +143,21 @@ public class World extends Application3D implements KeyListener {
         // Use Avatar texture and draw Avatar
         useTexture(gl, avatarTexture);
         avatar.draw(gl,frame);
+
+        // Use Road texture and draw Roads
+//        useTexture(gl, roadTexture);
+//        terrain.drawRoads(gl, frame);
 	}
 
 	@Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
+		terrain.destroyRoads(gl);
         terrain.destroyTrees(gl);
         terrain.destroyTerrain(gl);
 		terrainTexture.destroy(gl);
 		treeTexture.destroy(gl);
+		roadTexture.destroy(gl);
 	}
 
     /**
