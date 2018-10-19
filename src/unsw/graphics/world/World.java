@@ -54,12 +54,18 @@ public class World extends Application3D implements KeyListener {
     private Texture roadTexture;
 
     private boolean avatarView; //False == Third person view
+    private boolean nightTime;
+
+    private Color ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
+    private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
+    private Color specularCoeff = new Color(0.2f, 0.2f, 0.2f);
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
         this.avatar = new Avatar();
         this.avatarView = false;
+        this.nightTime = false;
 
         cameraY += (float) terrain.getGridAltitude(0, 0);
     }
@@ -109,12 +115,12 @@ public class World extends Application3D implements KeyListener {
         // Set the lighting properties
         Shader.setPoint3D(gl, "lightPos", terrain.getSunlight().asPoint3D());
         Shader.setColor(gl, "lightIntensity", Color.WHITE);
-        Shader.setColor(gl, "ambientIntensity", new Color(0.5f, 0.5f, 0.5f));
+        Shader.setColor(gl, "ambientIntensity", ambientIntesity);
 
         // Set the material properties
         Shader.setColor(gl, "ambientCoeff", Color.WHITE);
-        Shader.setColor(gl, "diffuseCoeff", new Color(0.8f, 0.8f, 0.8f));
-        Shader.setColor(gl, "specularCoeff", new Color(0.2f, 0.2f, 0.2f));
+        Shader.setColor(gl, "diffuseCoeff", diffuseCoeff);
+        Shader.setColor(gl, "specularCoeff", specularCoeff);
         Shader.setFloat(gl, "phongExp", 16f);
 
         // Camera
@@ -212,6 +218,18 @@ public class World extends Application3D implements KeyListener {
             case KeyEvent.VK_A:
                 avatarView = !avatarView;
                 break;
+            case KeyEvent.VK_N:
+                nightTime = !nightTime;
+                if (nightTime) {
+                    ambientIntesity = new Color(0.4f, 0.4f, 0.4f);
+                    diffuseCoeff = new Color(0.1f, 0.1f, 0.1f);
+                    specularCoeff = new Color(0.1f, 0.1f, 0.1f);
+                } else {
+                    ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
+                    diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
+                    specularCoeff = new Color(0.2f, 0.2f, 0.2f);
+                }
+
             default:
                 break;
         }
