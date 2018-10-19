@@ -92,7 +92,7 @@ public class World extends Application3D implements KeyListener {
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
-        avatarTexture = new Texture(gl, "res/textures/BrightPurpleMarble.png", "png", false);
+        avatarTexture = new Texture(gl, "res/textures/bunny.jpg", "jpg", true);
         roadTexture = new Texture(gl, "res/textures/road.jpg", "jpg", true);
 
         // Initialise shader
@@ -151,8 +151,8 @@ public class World extends Application3D implements KeyListener {
         avatar.draw(gl,frame);
 
         // Use Road texture and draw Roads
-//        useTexture(gl, roadTexture);
-//        terrain.drawRoads(gl, frame);
+        useTexture(gl, roadTexture);
+        terrain.drawRoads(gl, frame);
 	}
 
 	@Override

@@ -51,7 +51,7 @@ public class Road {
      * @return
      */
     public int size() {
-        return points.size() / 6;
+        return points.size() / 3;
     }
 
     /**
@@ -172,7 +172,7 @@ public class Road {
         List<Integer> indices = new ArrayList<>();
         List<Point2D> texCoords = new ArrayList<Point2D>();
 
-        float roadAltitude = terrain.altitude(points.get(0).getX(), points.get(0).getY());
+        float roadAltitude = terrain.altitude(points.get(0).getX(), points.get(0).getY()) + 0.05f;
 
 //        1) Sample points along the spine using different values of t
 //        2) For each t:
@@ -181,9 +181,9 @@ public class Road {
 //              - multiply each point on the cross section by the matrix.
 //              - join these points to the next set of points using quads/triangles.
 
-        float dt = (points.size()/6f)/SEGMENTS;
+        float dt = (points.size()/3f)/SEGMENTS;
 
-        for(float t = 0f; t <= points.size(); t += dt){
+        for(float t = 0f; t <= this.size(); t += dt){
             // Spine is the set of control points for our bezier curve (ROAD)
             // Calculate point on Road
             Point2D p1 = point(t);
@@ -239,8 +239,8 @@ public class Road {
                 //   | /                |
                 // index1 ---------- index3
 
-                indices.addAll(Arrays.asList(index1, index3, index2));
-                indices.addAll(Arrays.asList(index1, index2, index0));
+                indices.addAll(Arrays.asList(index2, index3, index1));
+                indices.addAll(Arrays.asList(index0, index2, index1));
             }
             System.out.println("Well t = " + t);
         }
