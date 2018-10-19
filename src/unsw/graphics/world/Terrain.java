@@ -160,7 +160,7 @@ public class Terrain {
      * @param z
      */
     public void addRoad(float width, List<Point2D> spine) {
-        Road road = new Road(width, spine);
+        Road road = new Road(width, spine, this);
         roads.add(road);        
     }
 
