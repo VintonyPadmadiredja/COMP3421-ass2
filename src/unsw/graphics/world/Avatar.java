@@ -47,8 +47,17 @@ public class Avatar {
                 .rotateY(MODEL_ROTATION + rotateY)
                 .scale(MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR);
 
+
+        // Enable polygon offset to avoid Z-Fighting of Avatar and Terrain
+        gl.glEnable(GL3.GL_POLYGON_OFFSET_FILL);
+        gl.glPolygonOffset(-1,-1);
+
         // Draw the avatar's meshes
         avatar.draw(gl, avatarFrame);
+
+        // Disable polygon offset
+        gl.glDisable(GL3.GL_POLYGON_OFFSET_FILL);
+
     }
 
     /**
