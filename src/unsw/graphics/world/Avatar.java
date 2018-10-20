@@ -9,13 +9,11 @@ import java.io.IOException;
 
 public class Avatar {
 
-    private static final float MODEL_SCALE_FACTOR = 5f;
+    private static final float MODEL_SCALE_FACTOR = 3f;
     private static final float MODEL_ROTATION = 180f;
-    private static final float MODEL_ROTATION_Z = 45f;
 
     private TriangleMesh avatar;
     private Point3D position;
-    private float rotateZ = 0;
     private float rotateY = 0;
 
     public Avatar() {
@@ -47,11 +45,16 @@ public class Avatar {
         CoordFrame3D avatarFrame = frame
                 .translate(position)
                 .rotateY(MODEL_ROTATION + rotateY)
-//                .rotateZ(rotateZ)
                 .scale(MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR);
+
+        gl.glEnable(GL3.GL_POLYGON_OFFSET_FILL);
+        gl.glPolygonOffset(-1,-1);
 
         // Draw the avatar's meshes
         avatar.draw(gl, avatarFrame);
+
+        // Disable polygon offset
+        gl.glDisable(GL3.GL_POLYGON_OFFSET_FILL);
     }
 
     /**
@@ -75,22 +78,6 @@ public class Avatar {
     }
 
     public void updatePosition(float x, float y, float z) {
-        //not quite right yet
-//        if (position.getY() < y) {
-//            if (x < position.getX() || z < position.getZ()) {
-//                rotateZ = MODEL_ROTATION_Z;
-//            } else {
-//                rotateZ = -MODEL_ROTATION_Z;
-//            }
-//        } else if (position.getY() > y) {
-//            if (x < position.getX() || z < position.getZ()) {
-//                rotateZ = -MODEL_ROTATION_Z;
-//            } else {
-//                rotateZ = MODEL_ROTATION_Z;
-//            }
-//        } else {
-//            rotateZ = 0;
-//        }
         position = new Point3D(x, y, z);
     }
 }

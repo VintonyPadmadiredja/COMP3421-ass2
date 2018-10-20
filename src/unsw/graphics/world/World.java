@@ -32,8 +32,8 @@ public class World extends Application3D implements KeyListener {
     private final float ROTATION_SCALE = 2f;
     private final float TRANSLATION_SCALE = 0.2f;
 
-    private final float CAMERA_UP = 1;
-    private final float CAMERA_BACK = 5;
+    private final float CAMERA_UP = 0.75f;
+    private final float CAMERA_BACK = 4.5f;
 
     private final float DAY_CYCLE_IN_MILLISECONDS = 20000f;
     private final float SUN_CENTRE_X = 0;
