@@ -48,6 +48,8 @@ public class ParticleSystem {
         for (int i = 0; i < MAX_PARTICLES; i++) {
             particles[i] = new Particle();
         }
+
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void draw(GL3 gl, CoordFrame3D frame) {
