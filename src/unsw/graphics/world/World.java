@@ -39,6 +39,10 @@ public class World extends Application3D implements KeyListener {
     private final float CAMERA_UP = 1;
     private final float CAMERA_BACK = 5;
 
+    private final float DAY_CYCLE_IN_MILLISECONDS = 40000f;
+    private final float SUN_CENTRE_X = 0;
+    private final float SUN_CENTRE_Y = 0;
+
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
     private float cameraZ = 0;
@@ -197,11 +201,11 @@ public class World extends Application3D implements KeyListener {
 
         // Calculate angle
         long elapsedTime = System.currentTimeMillis() - startTime;
-        float percentageDay = ((float) elapsedTime % 40000f)/40000f;
+        float percentageDay = ((float) elapsedTime % DAY_CYCLE_IN_MILLISECONDS) / DAY_CYCLE_IN_MILLISECONDS;
         sunAngle = (float) Math.toRadians(360 * percentageDay);
 
-        float newX = 0f + ((float) Math.cos((double) sunAngle)*sunRadius);
-        float newY = 0f + ((float) Math.sin((double) sunAngle)*sunRadius);
+        float newX = SUN_CENTRE_X + ((float) Math.cos((double) sunAngle)*sunRadius);
+        float newY = SUN_CENTRE_Y + ((float) Math.sin((double) sunAngle)*sunRadius);
 
         sunPosition = new Point3D(newX, newY, sunPosition.getZ());
     }
