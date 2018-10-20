@@ -47,7 +47,7 @@ public class Avatar {
         CoordFrame3D avatarFrame = frame
                 .translate(position)
                 .rotateY(MODEL_ROTATION + rotateY)
-                .rotateZ(rotateZ)
+//                .rotateZ(rotateZ)
                 .scale(MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR);
 
         // Draw the avatar's meshes

@@ -55,10 +55,13 @@ public class World extends Application3D implements KeyListener {
 
     private boolean avatarView; //False == Third person view
     private boolean nightTime;
+    private boolean isRaining;
 
     private Color ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
     private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
     private Color specularCoeff = new Color(0.2f, 0.2f, 0.2f);
+
+    private ParticleSystem rain;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -66,6 +69,8 @@ public class World extends Application3D implements KeyListener {
         this.avatar = new Avatar();
         this.avatarView = false;
         this.nightTime = false;
+        this.isRaining = false;
+        this.rain = new ParticleSystem(terrain.getWidth(), terrain.getDepth());
 
         cameraY += (float) terrain.getGridAltitude(0, 0);
     }
@@ -88,6 +93,7 @@ public class World extends Application3D implements KeyListener {
         getWindow().addKeyListener(this);
         terrain.makeTerrain(gl);
         avatar.init(gl);
+        rain.init(gl);
 
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
@@ -168,11 +174,17 @@ public class World extends Application3D implements KeyListener {
         // Use Road texture and draw Roads
         useTexture(gl, roadTexture);
         terrain.drawRoads(gl, frame);
+
+        if (isRaining) {
+            rain.draw(gl, frame);
+        }
 	}
 
 	@Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
+		rain.destroy(gl);
+		avatar.destroy(gl);
 		terrain.destroyRoads(gl);
         terrain.destroyTrees(gl);
         terrain.destroyTerrain(gl);
@@ -244,7 +256,9 @@ public class World extends Application3D implements KeyListener {
                     diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
                     specularCoeff = new Color(0.2f, 0.2f, 0.2f);
                 }
-
+                break;
+            case KeyEvent.VK_R:
+                isRaining = !isRaining;
             default:
                 break;
         }
