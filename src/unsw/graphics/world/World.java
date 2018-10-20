@@ -210,37 +210,37 @@ public class World extends Application3D implements KeyListener {
         if (angle < 10)
             sunColor = new Color(133, 155, 188);
         else if (angle < 20)
-            sunColor = new Color(154, 183, 205);
+            sunColor = new Color(163, 192, 214);
         else if (angle < 30)
-            sunColor = new Color(168, 206, 218);
+            sunColor = new Color(198, 218, 218);
         else if (angle < 40)
-            sunColor = new Color(156, 222, 225);
+            sunColor = new Color(214, 225, 214);
         else if (angle < 50)
-            sunColor = new Color(165, 227, 232);
+            sunColor = new Color(232, 229, 212);
         else if (angle < 60)
-            sunColor = new Color(181, 244, 249);
+            sunColor = new Color(238, 237, 204);
         else if (angle < 70)
-            sunColor = new Color(206, 247, 216);
+            sunColor = new Color(226, 225, 178);
         else if (angle < 80)
-            sunColor = new Color(221, 239, 212);
+            sunColor = new Color(239, 224, 158);
         else if (angle < 90)
-            sunColor = new Color(212, 231, 193);
+            sunColor = new Color(219, 210, 111);
         else if (angle < 100)
-            sunColor = new Color(224, 230, 172);
+            sunColor = new Color(230, 210, 103);
         else if (angle < 110)
-            sunColor = new Color(243, 246, 166);
+            sunColor = new Color(229, 196, 100);
         else if (angle < 120)
-            sunColor = new Color(241, 226, 130);
+            sunColor = new Color(241, 210, 107);
         else if (angle < 130)
             sunColor = new Color(239, 212, 117);
         else if (angle < 140)
-            sunColor = new Color(235, 188, 109);
+              sunColor = new Color(235, 198, 119);
         else if (angle < 150)
-            sunColor = new Color(224, 165, 105);
+            sunColor = new Color(224, 173, 122);
         else if (angle < 160)
-            sunColor = new Color(214, 139, 98);
+            sunColor = new Color(214, 158, 118);
         else if (angle < 170)
-            sunColor = new Color(191, 125, 85);
+            sunColor = new Color(191, 143, 116);
         else if (angle < 180)
             sunColor = new Color(191, 151, 157);
         else if (angle < 190)
@@ -254,29 +254,29 @@ public class World extends Application3D implements KeyListener {
         else if (angle < 230)
             sunColor = new Color(75, 83, 159);
         else if (angle < 240)
-            sunColor = new Color(41, 47, 122);
+            sunColor = new Color(44, 50, 141);
         else if (angle < 250)
-            sunColor = new Color(34, 40, 86);
+            sunColor = new Color(41, 47, 124);
         else if (angle < 260)
-            sunColor = new Color(25, 32, 74);
+            sunColor = new Color(36, 43, 131);
         else if (angle < 270)
-            sunColor = new Color(29, 36, 101);
+            sunColor = new Color(35, 43, 141);
         else if (angle < 280)
             sunColor = new Color(31, 60, 131);
         else if (angle < 290)
-            sunColor = new Color(38, 92, 143);
+            sunColor = new Color(38, 83, 134);
         else if (angle < 300)
-            sunColor = new Color(37, 100, 148);
+            sunColor = new Color(36, 89, 136);
         else if (angle < 310)
             sunColor = new Color(57, 100, 148);
         else if (angle < 320)
-            sunColor = new Color(77, 88, 147);
+            sunColor = new Color(60, 105, 156);
         else if (angle < 330)
-            sunColor = new Color(94, 108, 160);
+            sunColor = new Color(67, 111, 168);
         else if (angle < 340)
-            sunColor = new Color(107, 127, 166);
+            sunColor = new Color(86, 137, 178);
         else if (angle < 350)
-            sunColor = new Color(125, 147, 180);
+            sunColor = new Color(106, 158, 188);
         else if (angle < 360)
             sunColor = new Color(133, 155, 188);
     }
