@@ -62,7 +62,6 @@ public class World extends Application3D implements KeyListener {
     private boolean nightTime;
     private boolean isRaining;
     private boolean dayNightMode = false;
-    private boolean dayNightMode = false;
 
     private Color ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
     private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
@@ -379,8 +378,6 @@ public class World extends Application3D implements KeyListener {
                 isRaining = !isRaining;
                 break;
             case KeyEvent.VK_SPACE:
-                dayNightMode = !dayNightMode;
-                break;
                 dayNightMode = !dayNightMode;
 
                 // Reset Sun's position
