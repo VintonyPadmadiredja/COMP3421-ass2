@@ -10,6 +10,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.*;
+import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.scene.MathUtil;
 
@@ -36,6 +37,10 @@ public class World extends Application3D implements KeyListener {
     private final float CAMERA_UP = 1;
     private final float CAMERA_BACK = 5;
 
+    private final float DAY_CYCLE_IN_MILLISECONDS = 20000f;
+    private final float SUN_CENTRE_X = 0;
+    private final float SUN_CENTRE_Y = 0;
+
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
     private float cameraZ = 0;
@@ -56,12 +61,17 @@ public class World extends Application3D implements KeyListener {
     private boolean avatarView; //False == Third person view
     private boolean nightTime;
     private boolean isRaining;
+    private boolean dayNightMode = false;
 
     private Color ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
     private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
     private Color specularCoeff = new Color(0.2f, 0.2f, 0.2f);
 
     private ParticleSystem rain;
+    private Point3D sunPosition;
+    private float sunRadius;
+    private float sunAngle;
+    private long startTime = System.currentTimeMillis();
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -95,6 +105,12 @@ public class World extends Application3D implements KeyListener {
         avatar.init(gl);
         rain.init(gl);
 
+        sunPosition = terrain.getSunlight().asPoint3D();
+        double x = sunPosition.getX();
+        double y = sunPosition.getY();
+        double z = sunPosition.getZ();
+        sunRadius = (float) Math.sqrt(x*x + y*y + z*z);
+
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
@@ -119,7 +135,11 @@ public class World extends Application3D implements KeyListener {
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
 
         // Set the lighting properties
-        Shader.setPoint3D(gl, "lightPos", terrain.getSunlight().asPoint3D());
+        if (dayNightMode) {
+            updateSunPosition();
+        }
+
+        Shader.setPoint3D(gl, "lightPos", sunPosition);
         Shader.setColor(gl, "lightIntensity", Color.WHITE);
         Shader.setColor(gl, "ambientIntensity", ambientIntesity);
 
@@ -180,7 +200,23 @@ public class World extends Application3D implements KeyListener {
         }
 	}
 
-	@Override
+    private void updateSunPosition() {
+        // Rotate sun around the centre (0,0)
+        // X := originX + cos(angle)*radius;
+        // Y := originY + sin(angle)*radius;
+
+        // Calculate angle
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        float percentageDay = ((float) elapsedTime % DAY_CYCLE_IN_MILLISECONDS) / DAY_CYCLE_IN_MILLISECONDS;
+        sunAngle = (float) Math.toRadians(360 * percentageDay);
+
+        float newX = SUN_CENTRE_X + ((float) Math.cos((double) sunAngle)*sunRadius);
+        float newY = SUN_CENTRE_Y + ((float) Math.sin((double) sunAngle)*sunRadius);
+
+        sunPosition = new Point3D(newX, newY, sunPosition.getZ());
+    }
+
+    @Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
 		rain.destroy(gl);
@@ -259,6 +295,10 @@ public class World extends Application3D implements KeyListener {
                 break;
             case KeyEvent.VK_R:
                 isRaining = !isRaining;
+                break;
+            case KeyEvent.VK_SPACE:
+                dayNightMode = !dayNightMode;
+                break;
             default:
                 break;
         }

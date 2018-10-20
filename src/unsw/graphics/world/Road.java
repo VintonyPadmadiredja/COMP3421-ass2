@@ -18,7 +18,7 @@ import unsw.graphics.geometry.TriangleMesh;
  */
 public class Road {
 
-    private static final float SEGMENTS = 32f; // Sampling rate of the curve
+    private static final float SEGMENTS = 100f; // Sampling rate of the curve
     private List<Point2D> points;
     private float width;
     private TriangleMesh road;
@@ -118,7 +118,7 @@ public class Road {
     }
 
     /**
-     * Get a point on the spine. The parameter t may vary from 0 to size().
+     * Get a tangent point on the spine. The parameter t may vary from 0 to size().
      * Points on the kth segment take have parameters in the range (k, k+1).
      *
      * @param t
