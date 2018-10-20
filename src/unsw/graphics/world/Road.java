@@ -118,7 +118,7 @@ public class Road {
     }
 
     /**
-     * Get a point on the spine. The parameter t may vary from 0 to size().
+     * Get a tangent point on the spine. The parameter t may vary from 0 to size().
      * Points on the kth segment take have parameters in the range (k, k+1).
      *
      * @param t
