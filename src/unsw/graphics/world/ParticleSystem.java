@@ -35,7 +35,7 @@ public class ParticleSystem {
     public void init(GL3 gl) {
         try {
             // Initialise rain  model
-            model = new TriangleMesh("res/models/sphere.ply");
+            model = new TriangleMesh("res/models/rain.ply");
             model.init(gl);
 
         } catch (IOException e) {
@@ -90,7 +90,8 @@ public class ParticleSystem {
 
     // Particle (inner class)
     class Particle {
-        private static final float MODEL_SCALE = 0.0002f;
+        private static final float MODEL_SCALE = 0.0005f;
+        private static final float MODEL_ROTATION = -90f;
         private static final float SPEED = 0.025f;
 
         float life; // how alive it is
@@ -121,7 +122,7 @@ public class ParticleSystem {
             gl.glActiveTexture(GL.GL_TEXTURE0);
             gl.glBindTexture(GL.GL_TEXTURE_2D, texture.getId());
 
-            CoordFrame3D particleFrame = frame.translate(x, y, z).scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+            CoordFrame3D particleFrame = frame.translate(x, y, z).rotateX(MODEL_ROTATION).scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
             model.draw(gl, particleFrame);
         }
