@@ -25,8 +25,6 @@ public class World extends Application3D implements KeyListener {
     private Terrain terrain;
     private Avatar avatar;
 
-    private static final boolean DAY_NIGHT_MODE_ON = true;
-
     private final float MINIMUM_ALTITUDE = 1.5f;
     private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
     private final float TRANSITION_ALTITUDE_SCALE = 0.25f;
@@ -39,7 +37,7 @@ public class World extends Application3D implements KeyListener {
     private final float CAMERA_UP = 1;
     private final float CAMERA_BACK = 5;
 
-    private final float DAY_CYCLE_IN_MILLISECONDS = 40000f;
+    private final float DAY_CYCLE_IN_MILLISECONDS = 20000f;
     private final float SUN_CENTRE_X = 0;
     private final float SUN_CENTRE_Y = 0;
 
@@ -62,6 +60,7 @@ public class World extends Application3D implements KeyListener {
 
     private boolean avatarView; //False == Third person view
     private boolean nightTime;
+    private boolean day_night_mode = false;
 
     private Color ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
     private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
@@ -124,9 +123,6 @@ public class World extends Application3D implements KeyListener {
 	public void display(GL3 gl) {
 		super.display(gl);
 
-//        gl.glClearColor(); // Sky colour
-//        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-
         // Set wrap mode for texture in S direction
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 
@@ -134,9 +130,10 @@ public class World extends Application3D implements KeyListener {
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
 
         // Set the lighting properties
-        if (DAY_NIGHT_MODE_ON) {
+        if (day_night_mode) {
             updateSunPosition();
         }
+
         Shader.setPoint3D(gl, "lightPos", sunPosition);
         Shader.setColor(gl, "lightIntensity", Color.WHITE);
         Shader.setColor(gl, "ambientIntensity", ambientIntesity);
@@ -284,7 +281,9 @@ public class World extends Application3D implements KeyListener {
                     diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
                     specularCoeff = new Color(0.2f, 0.2f, 0.2f);
                 }
-
+                break;
+            case KeyEvent.VK_SPACE:
+                day_night_mode = !day_night_mode;
             default:
                 break;
         }
