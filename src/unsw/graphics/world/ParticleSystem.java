@@ -35,7 +35,7 @@ public class ParticleSystem {
     public void init(GL3 gl) {
         try {
             // Initialise rain  model
-            model = new TriangleMesh("res/models/cube.ply");
+            model = new TriangleMesh("res/models/sphere.ply");
             model.init(gl);
 
         } catch (IOException e) {
@@ -90,7 +90,7 @@ public class ParticleSystem {
 
     // Particle (inner class)
     class Particle {
-        private static final float MODEL_SCALE = 0.02f;
+        private static final float MODEL_SCALE = 0.0002f;
         private static final float SPEED = 0.025f;
 
         float life; // how alive it is
