@@ -18,7 +18,7 @@ import unsw.graphics.geometry.TriangleMesh;
  */
 public class Road {
 
-    private static final float SEGMENTS = 32f; // Sampling rate of the curve
+    private static final float SEGMENTS = 100f; // Sampling rate of the curve
     private List<Point2D> points;
     private float width;
     private TriangleMesh road;
