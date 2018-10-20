@@ -32,8 +32,6 @@ public class World extends Application3D implements KeyListener {
     private final float ROTATION_SCALE = 2f;
     private final float TRANSLATION_SCALE = 0.2f;
 
-    private final float AVATAR_ROTATION_SCALE = 5f;
-
     private final float CAMERA_UP = 1;
     private final float CAMERA_BACK = 5;
 
@@ -163,8 +161,8 @@ public class World extends Application3D implements KeyListener {
             Shader.setFloat(gl, "cutoff", 12.5f);
             Shader.setFloat(gl, "attenuationExp", 128f);
             Shader.setFloat(gl, "constant", 1f);
-            Shader.setFloat(gl, "linear", 0.05f);
-            Shader.setFloat(gl, "quadratic", 0.01f);
+            Shader.setFloat(gl, "linear", 0.008f);
+            Shader.setFloat(gl, "quadratic", 0.005f);
         } else {
             Shader.setFloat(gl, "torchEnabled", 0f);
         }
