@@ -188,7 +188,7 @@ public class Road {
             // Calculate point on Road
             Point2D p1 = point(t);
 
-            System.out.println("Point p1 = " + p1.getX() + ", " + p1.getY());
+//            System.out.println("Point p1 = " + p1.getX() + ", " + p1.getY());
             // i = (k3, 0, -k1) <- Note: k3, k1 means z, x components respectively of vector k (defined below)
             // k = normalise(tangent to curve at t)
             // j = k x i
@@ -242,7 +242,7 @@ public class Road {
                 indices.addAll(Arrays.asList(index2, index3, index1));
                 indices.addAll(Arrays.asList(index0, index2, index1));
             }
-            System.out.println("Well t = " + t);
+//            System.out.println("Well t = " + t);
         }
 
 
