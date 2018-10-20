@@ -1,6 +1,7 @@
 package unsw.graphics.world;
 
 import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
 import unsw.graphics.*;
 import unsw.graphics.geometry.TriangleMesh;
@@ -48,11 +49,14 @@ public class ParticleSystem {
         for (int i = 0; i < MAX_PARTICLES; i++) {
             particles[i] = new Particle();
         }
-
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void draw(GL3 gl, CoordFrame3D frame) {
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendColor(1.0f,1.0f,1.0f,0.5f);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+
         // Update the particles
         for (int i = 0; i < MAX_PARTICLES; i++) {
             // Move the particle
@@ -75,6 +79,8 @@ public class ParticleSystem {
                 particles[i] = new Particle();
             }
         }
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_BLEND);
     }
 
     public void destroy(GL3 gl) {
