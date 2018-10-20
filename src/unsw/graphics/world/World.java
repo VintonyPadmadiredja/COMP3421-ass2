@@ -382,7 +382,7 @@ public class World extends Application3D implements KeyListener {
 
                 // Reset Sun's to original settings
                 sunPosition = initialSunPosition;
-                sunColor = sunColor.WHITE;
+                sunColor = Color.WHITE;
                 startTime = System.currentTimeMillis();
             default:
                 break;
