@@ -10,6 +10,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.*;
+import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.scene.MathUtil;
 
@@ -23,6 +24,8 @@ public class World extends Application3D implements KeyListener {
 
     private Terrain terrain;
     private Avatar avatar;
+
+    private static final boolean DAY_NIGHT_MODE_ON = true;
 
     private final float MINIMUM_ALTITUDE = 1.5f;
     private final float TRANSITION_ALTITUDE_THRESHOLD = 0.5f;
@@ -60,6 +63,11 @@ public class World extends Application3D implements KeyListener {
     private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
     private Color specularCoeff = new Color(0.2f, 0.2f, 0.2f);
 
+    private Point3D sunPosition;
+    private float sunRadius;
+    private float sunAngle;
+    private long startTime = System.currentTimeMillis();
+
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
@@ -89,6 +97,12 @@ public class World extends Application3D implements KeyListener {
         terrain.makeTerrain(gl);
         avatar.init(gl);
 
+        sunPosition = terrain.getSunlight().asPoint3D();
+        double x = sunPosition.getX();
+        double y = sunPosition.getY();
+        double z = sunPosition.getZ();
+        sunRadius = (float) Math.sqrt(x*x + y*y + z*z);
+
         // Initialise textures
         terrainTexture = new Texture(gl, "res/textures/grass.jpg", "jpg", true);
         treeTexture = new Texture(gl, "res/textures/tree.bmp", "bmp", true);
@@ -106,6 +120,9 @@ public class World extends Application3D implements KeyListener {
 	public void display(GL3 gl) {
 		super.display(gl);
 
+//        gl.glClearColor(); // Sky colour
+//        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
+
         // Set wrap mode for texture in S direction
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 
@@ -113,7 +130,10 @@ public class World extends Application3D implements KeyListener {
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
 
         // Set the lighting properties
-        Shader.setPoint3D(gl, "lightPos", terrain.getSunlight().asPoint3D());
+        if (DAY_NIGHT_MODE_ON) {
+            updateSunPosition();
+        }
+        Shader.setPoint3D(gl, "lightPos", sunPosition);
         Shader.setColor(gl, "lightIntensity", Color.WHITE);
         Shader.setColor(gl, "ambientIntensity", ambientIntesity);
 
@@ -170,7 +190,23 @@ public class World extends Application3D implements KeyListener {
         terrain.drawRoads(gl, frame);
 	}
 
-	@Override
+    private void updateSunPosition() {
+        // Rotate sun around the centre (0,0)
+        // X := originX + cos(angle)*radius;
+        // Y := originY + sin(angle)*radius;
+
+        // Calculate angle
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        float percentageDay = ((float) elapsedTime % 40000f)/40000f;
+        sunAngle = (float) Math.toRadians(360 * percentageDay);
+
+        float newX = 0f + ((float) Math.cos((double) sunAngle)*sunRadius);
+        float newY = 0f + ((float) Math.sin((double) sunAngle)*sunRadius);
+
+        sunPosition = new Point3D(newX, newY, sunPosition.getZ());
+    }
+
+    @Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
 		terrain.destroyRoads(gl);
