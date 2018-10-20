@@ -62,15 +62,18 @@ public class World extends Application3D implements KeyListener {
     private boolean nightTime;
     private boolean isRaining;
     private boolean dayNightMode = false;
+    private boolean dayNightMode = false;
 
     private Color ambientIntesity = new Color(0.5f, 0.5f, 0.5f);
     private Color diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
     private Color specularCoeff = new Color(0.2f, 0.2f, 0.2f);
 
     private ParticleSystem rain;
+    private Point3D initialSunPosition;
     private Point3D sunPosition;
     private float sunRadius;
     private float sunAngle;
+    private Color sunColor = Color.WHITE;
     private long startTime = System.currentTimeMillis();
 
     public World(Terrain terrain) {
@@ -106,6 +109,8 @@ public class World extends Application3D implements KeyListener {
         rain.init(gl);
 
         sunPosition = terrain.getSunlight().asPoint3D();
+        initialSunPosition = terrain.getSunlight().asPoint3D();
+
         double x = sunPosition.getX();
         double y = sunPosition.getY();
         double z = sunPosition.getZ();
@@ -137,10 +142,11 @@ public class World extends Application3D implements KeyListener {
         // Set the lighting properties
         if (dayNightMode) {
             updateSunPosition();
+            updateSunColor();
         }
 
         Shader.setPoint3D(gl, "lightPos", sunPosition);
-        Shader.setColor(gl, "lightIntensity", Color.WHITE);
+        Shader.setColor(gl, "lightIntensity", sunColor);
         Shader.setColor(gl, "ambientIntensity", ambientIntesity);
 
         // Set the material properties
@@ -199,6 +205,82 @@ public class World extends Application3D implements KeyListener {
             rain.draw(gl, frame);
         }
 	}
+
+    private void updateSunColor() {
+        float angle = (float) Math.toDegrees(sunAngle);
+        if (angle < 10)
+            sunColor = Color.WHITE;
+        else if (angle < 20)
+            sunColor = Color.WHITE;
+        else if (angle < 30)
+            sunColor = Color.WHITE;
+        else if (angle < 40)
+            sunColor = Color.WHITE;
+        else if (angle < 50)
+            sunColor = Color.WHITE;
+        else if (angle < 60)
+            sunColor = Color.WHITE;
+        else if (angle < 70)
+            sunColor = Color.WHITE;
+        else if (angle < 80)
+            sunColor = Color.WHITE;
+        else if (angle < 90)
+            sunColor = Color.WHITE;
+        else if (angle < 100)
+            sunColor = Color.WHITE;
+        else if (angle < 110)
+            sunColor = Color.WHITE;
+        else if (angle < 120)
+            sunColor = Color.WHITE;
+        else if (angle < 130)
+            sunColor = Color.WHITE;
+        else if (angle < 140)
+            sunColor = Color.WHITE;
+        else if (angle < 150)
+            sunColor = Color.WHITE;
+        else if (angle < 160)
+            sunColor = Color.WHITE;
+        else if (angle < 170)
+            sunColor = Color.WHITE;
+        else if (angle < 180)
+            sunColor = Color.WHITE;
+        else if (angle < 190)
+            sunColor = Color.WHITE;
+        else if (angle < 200)
+            sunColor = Color.WHITE;
+        else if (angle < 210)
+            sunColor = Color.WHITE;
+        else if (angle < 220)
+            sunColor = Color.WHITE;
+        else if (angle < 230)
+            sunColor = Color.WHITE;
+        else if (angle < 240)
+            sunColor = Color.WHITE;
+        else if (angle < 250)
+            sunColor = Color.WHITE;
+        else if (angle < 260)
+            sunColor = Color.WHITE;
+        else if (angle < 270)
+            sunColor = Color.WHITE;
+        else if (angle < 280)
+            sunColor = Color.WHITE;
+        else if (angle < 290)
+            sunColor = Color.WHITE;
+        else if (angle < 300)
+            sunColor = Color.WHITE;
+        else if (angle < 310)
+            sunColor = Color.WHITE;
+        else if (angle < 320)
+            sunColor = Color.WHITE;
+        else if (angle < 330)
+            sunColor = Color.WHITE;
+        else if (angle < 340)
+            sunColor = Color.WHITE;
+        else if (angle < 350)
+            sunColor = Color.WHITE;
+        else if (angle < 360)
+            sunColor = Color.WHITE;
+    }
 
     private void updateSunPosition() {
         // Rotate sun around the centre (0,0)
@@ -299,6 +381,11 @@ public class World extends Application3D implements KeyListener {
             case KeyEvent.VK_SPACE:
                 dayNightMode = !dayNightMode;
                 break;
+                dayNightMode = !dayNightMode;
+
+                // Reset Sun's position
+                sunPosition = initialSunPosition;
+                startTime = System.currentTimeMillis();
             default:
                 break;
         }
