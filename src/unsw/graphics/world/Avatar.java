@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Avatar {
 
-    private static final float MODEL_SCALE_FACTOR = 3f;
+    private static final float MODEL_SCALE_FACTOR = 4.5f;
     private static final float MODEL_ROTATION = 180f;
 
     private TriangleMesh avatar;
@@ -47,14 +47,8 @@ public class Avatar {
                 .rotateY(MODEL_ROTATION + rotateY)
                 .scale(MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR, MODEL_SCALE_FACTOR);
 
-        gl.glEnable(GL3.GL_POLYGON_OFFSET_FILL);
-        gl.glPolygonOffset(-1,-1);
-
         // Draw the avatar's meshes
         avatar.draw(gl, avatarFrame);
-
-        // Disable polygon offset
-        gl.glDisable(GL3.GL_POLYGON_OFFSET_FILL);
     }
 
     /**
