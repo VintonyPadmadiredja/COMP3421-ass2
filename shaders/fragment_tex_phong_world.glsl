@@ -26,7 +26,7 @@ in vec2 texCoordFrag;
 // torch properties
 uniform float torchEnabled;
 uniform float cutoff;
-uniform float spotExp;
+uniform float attenuationExp;
 uniform vec3 cameraPos;
 uniform vec3 torchDiffuseCoeff;
 uniform vec3 torchSpecularCoeff;
@@ -66,10 +66,10 @@ void main()
             float distance =  length(vec4(cameraPos, 1) - viewPosition);
             float attenuation = 1.0/(constant + (linear * distance) + (quadratic * distance * distance));
 
-            diffuse = max(lightIntensity*torchDiffuseCoeff*theta, 0.0);
+            diffuse += max(lightIntensity*torchDiffuseCoeff*theta, 0.0);
             diffuse *= attenuation;
             ambientAndDiffuse = vec4(ambient + diffuse, 1);
-            specular = max(lightIntensity*torchSpecularCoeff*pow(theta, spotExp), 0.0);
+            specular += max(lightIntensity*torchSpecularCoeff*pow(theta, attenuationExp), 0.0);
             specular *= attenuation;
         }
     }
