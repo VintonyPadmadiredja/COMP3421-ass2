@@ -172,7 +172,7 @@ public class Road {
         List<Integer> indices = new ArrayList<>();
         List<Point2D> texCoords = new ArrayList<Point2D>();
 
-        float roadAltitude = terrain.altitude(points.get(0).getX(), points.get(0).getY()) + 0.05f;
+        float roadAltitude = terrain.altitude(points.get(0).getX(), points.get(0).getY());
 
 //        1) Sample points along the spine using different values of t
 //        2) For each t:
@@ -255,7 +255,16 @@ public class Road {
 
     public void draw(GL3 gl, CoordFrame3D frame){
         CoordFrame3D roadFrame = frame;
+
+        // Enable polygon offset to avoid Z-Fighting of Road and Terrain
+        gl.glEnable(GL3.GL_POLYGON_OFFSET_FILL);
+        gl.glPolygonOffset(-1,-1);
+
         road.draw(gl, roadFrame);
+
+        // Disable polygon offset
+        gl.glDisable(GL3.GL_POLYGON_OFFSET_FILL);
+
     }
 
     public void destroy(GL3 gl) {
