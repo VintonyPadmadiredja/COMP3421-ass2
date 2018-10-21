@@ -471,10 +471,12 @@ public class World extends Application3D implements KeyListener {
                 break;
             case KeyEvent.VK_R:
                 isRaining = !isRaining;
-                if (isRaining) {
-                    diffuseCoeff = new Color(0.7f, 0.7f, 0.7f);
-                } else {
-                    diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
+                if (!nightTime) {
+                    if (isRaining) {
+                        diffuseCoeff = new Color(0.7f, 0.7f, 0.7f);
+                    } else if (!isRaining) {
+                        diffuseCoeff = new Color(0.8f, 0.8f, 0.8f);
+                    }
                 }
                 break;
             case KeyEvent.VK_SPACE:
