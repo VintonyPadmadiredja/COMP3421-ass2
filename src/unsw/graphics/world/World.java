@@ -39,6 +39,14 @@ public class World extends Application3D implements KeyListener {
     private final float SUN_CENTRE_X = 0;
     private final float SUN_CENTRE_Y = 0;
 
+    private final float SKY_ANGLE_OFFSET = 90;
+    private final float SKY_R = 126;
+    private final float SKY_G = 192;
+    private final float SKY_B = 238;
+    private final float R_SCALE = 200;
+    private final float G_SCALE = 200;
+    private final float B_SCALE = 250;
+
     private float cameraX = 0;
     private float cameraY = MINIMUM_ALTITUDE;
     private float cameraZ = 0;
@@ -139,7 +147,7 @@ public class World extends Application3D implements KeyListener {
         // Set the lighting properties
         if (dayNightMode) {
             updateSunPosition();
-            updateskyColor();
+            updateSkyColor();
             gl.glClearColor(skyColor.getRed()/255f, skyColor.getGreen()/255f,skyColor.getBlue()/255f,skyColor.getAlpha()/255f);
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
         } else {
@@ -219,11 +227,21 @@ public class World extends Application3D implements KeyListener {
     /**
      * Change Sky's color based on its position
      */
-    private void updateskyColor() {
-        float angle = (float) Math.toDegrees(sunAngle);
-        float redControl = ((angle/360f) * 127f) + 127f;
-        float greenControl = ((angle/360f) * 127f) + 127f;
-        float blueControl = (255f - (angle/360f) * 127f );
+    private void updateSkyColor() {
+        float angle = (float) Math.abs(Math.cos((Math.toRadians(SKY_ANGLE_OFFSET) + sunAngle)/2));
+
+        float redControl = SKY_R - (angle * R_SCALE);
+        if (redControl < 0) {
+            redControl = 0;
+        }
+        float greenControl = SKY_G - (angle * G_SCALE);
+        if (greenControl < 0) {
+            greenControl = 0;
+        }
+        float blueControl = SKY_B - (angle * B_SCALE);
+        if (blueControl < 0) {
+            blueControl = 0;
+        }
 
         skyColor = new Color((int) redControl, (int) greenControl, (int) blueControl);
     }
