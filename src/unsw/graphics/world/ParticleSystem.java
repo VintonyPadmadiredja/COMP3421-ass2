@@ -122,7 +122,8 @@ public class ParticleSystem {
             gl.glActiveTexture(GL.GL_TEXTURE0);
             gl.glBindTexture(GL.GL_TEXTURE_2D, texture.getId());
 
-            CoordFrame3D particleFrame = frame.translate(x, y, z).rotateX(MODEL_ROTATION).scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+            CoordFrame3D particleFrame = frame.translate(x, y, z).rotateX(MODEL_ROTATION)
+                    .scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
             model.draw(gl, particleFrame);
         }

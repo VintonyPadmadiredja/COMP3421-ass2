@@ -76,10 +76,20 @@ public class Avatar {
         avatar.destroy(gl);
     }
 
+    /**
+     * Rotate position of avatar
+     * @param r
+     */
     public void rotate(float r) {
         rotateY += r;
     }
 
+    /**
+     * Update posiition of avatar
+     * @param x
+     * @param y
+     * @param z
+     */
     public void updatePosition(float x, float y, float z) {
         position = new Point3D(x, y, z);
     }

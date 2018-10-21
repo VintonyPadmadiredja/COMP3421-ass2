@@ -24,7 +24,7 @@ in vec3 m;
 in vec2 texCoordFrag;
 
 // torch properties
-uniform float torchEnabled;
+uniform int torchEnabled;
 uniform float cutoff;
 uniform float attenuationExp;
 uniform vec3 cameraPos;

@@ -174,7 +174,7 @@ public class World extends Application3D implements KeyListener {
         Shader.setFloat(gl, "phongExp", 16f);
 
         if (nightTime) {
-            Shader.setFloat(gl, "torchEnabled", 1f);
+            Shader.setInt(gl, "torchEnabled", 1);
             Shader.setPoint3D(gl, "torchLightDirection", new Point3D(0, 0, -1));
             Shader.setColor(gl, "torchDiffuseCoeff", new Color(0.8f, 0.8f, 0.8f));
             Shader.setColor(gl, "torchSpecularCoeff", new Color(0.5f, 0.5f, 0.5f));
@@ -185,7 +185,7 @@ public class World extends Application3D implements KeyListener {
             Shader.setFloat(gl, "linear", 0.008f);
             Shader.setFloat(gl, "quadratic", 0.005f);
         } else {
-            Shader.setFloat(gl, "torchEnabled", 0f);
+            Shader.setInt(gl, "torchEnabled", 0);
         }
 
         // Camera
