@@ -19,6 +19,7 @@ import unsw.graphics.geometry.TriangleMesh;
 public class Road {
 
     private static final float SEGMENTS = 100f; // Sampling rate of the curve
+    private static final Vector3 ROAD_NORMAL = new Vector3(0,1,0);
     private List<Point2D> points;
     private float width;
     private TriangleMesh road;
@@ -169,6 +170,7 @@ public class Road {
 
     public void init(GL3 gl){
         List<Point3D> vertices = new ArrayList<>();
+        List<Vector3> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
         List<Point2D> texCoords = new ArrayList<Point2D>();
 
@@ -241,13 +243,14 @@ public class Road {
 
                 indices.addAll(Arrays.asList(index2, index3, index1));
                 indices.addAll(Arrays.asList(index0, index2, index1));
+                normals.add(ROAD_NORMAL);
+                normals.add(ROAD_NORMAL);
             }
 //            System.out.println("Well t = " + t);
         }
 
-
 //        road = new TriangleMesh(points);
-        road = new TriangleMesh(vertices, indices, true, texCoords);
+        road = new TriangleMesh(vertices, normals, indices, texCoords);
 
         // Initialise road
         road.init(gl);
