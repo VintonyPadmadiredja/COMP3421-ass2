@@ -190,7 +190,6 @@ public class Road {
             // Calculate point on Road
             Point2D p1 = point(t);
 
-//            System.out.println("Point p1 = " + p1.getX() + ", " + p1.getY());
             // i = (k3, 0, -k1) <- Note: k3, k1 means z, x components respectively of vector k (defined below)
             // k = normalise(tangent to curve at t)
             // j = k x i
@@ -246,16 +245,19 @@ public class Road {
                 normals.add(ROAD_NORMAL);
                 normals.add(ROAD_NORMAL);
             }
-//            System.out.println("Well t = " + t);
         }
 
-//        road = new TriangleMesh(points);
         road = new TriangleMesh(vertices, normals, indices, texCoords);
 
         // Initialise road
         road.init(gl);
     }
 
+    /**
+     * Draw road
+     * @param gl
+     * @param frame
+     */
     public void draw(GL3 gl, CoordFrame3D frame){
         CoordFrame3D roadFrame = frame;
 
@@ -270,6 +272,10 @@ public class Road {
 
     }
 
+    /**
+     * Destroy road
+     * @param gl
+     */
     public void destroy(GL3 gl) {
         road.destroy(gl);
     }
