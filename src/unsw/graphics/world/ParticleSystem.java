@@ -103,10 +103,10 @@ public class ParticleSystem {
         // Constructor
         public Particle() {
             // position the rain
-            x = (rand.nextFloat() * 10 % terrainWidth);
+            // -1 as it can produce values > 9 thus rain will fall outside terrain
+            x = (rand.nextFloat() * 10 % (terrainWidth - 1));
             y = (rand.nextFloat() * 10 % 10);
-            z = (rand.nextFloat() * 10 % terrainDepth);
-
+            z = (rand.nextFloat() * 10 % (terrainDepth - 1));
             float angle = (float) Math.toRadians(45);
 
             speedY = SPEED * (float) Math.sin(angle) + speedYGlobal;
