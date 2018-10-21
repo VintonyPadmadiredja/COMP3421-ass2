@@ -143,8 +143,16 @@ public class World extends Application3D implements KeyListener {
             gl.glClearColor(sunColor.getRed()/255f, sunColor.getGreen()/255f,sunColor.getBlue()/255f,sunColor.getAlpha()/255f);
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
         } else {
-            gl.glClearColor(126f/255f, 192f/255f,238f/255f,255f/255f);
-            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+            if (nightTime){
+                // Torch on, with sky dark
+                gl.glClearColor(41f/255f, 62f/255f,77f/255f,255f/255f);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+
+            } else {
+                // No torch, day colour of sky
+                gl.glClearColor(126f/255f, 192f/255f,238f/255f,255f/255f);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+            }
         }
 
         Shader.setPoint3D(gl, "lightPos", sunPosition);
@@ -207,89 +215,163 @@ public class World extends Application3D implements KeyListener {
             rain.draw(gl, frame);
         }
 	}
-
-    /**
-     * Change Sun's color based on its position
-     */
     private void updateSunColor() {
         float angle = (float) Math.toDegrees(sunAngle);
         if (angle < 10)
-            sunColor = new Color(95, 145, 179);
+            sunColor = new Color(133, 155, 188);
         else if (angle < 20)
-            sunColor = new Color(101, 155, 191);
+            sunColor = new Color(163, 192, 214);
         else if (angle < 30)
-            sunColor = new Color(108, 166, 204);
+            sunColor = new Color(198, 218, 218);
         else if (angle < 40)
-            sunColor = new Color(115, 176, 217);
+            sunColor = new Color(214, 225, 214);
         else if (angle < 50)
-            sunColor = new Color(122, 186, 230);
+            sunColor = new Color(232, 229, 212);
         else if (angle < 60)
-            sunColor = new Color(128, 201, 242);
+            sunColor = new Color(238, 237, 204);
         else if (angle < 70)
-            sunColor = new Color(135, 207, 255);
+            sunColor = new Color(226, 225, 178);
         else if (angle < 80)
-            sunColor = new Color(135, 207, 255);
+            sunColor = new Color(239, 224, 158);
         else if (angle < 90)
-            sunColor = new Color(135, 207, 255);
+            sunColor = new Color(219, 210, 111);
         else if (angle < 100)
-            sunColor = new Color(135, 209, 255);
+            sunColor = new Color(230, 210, 103);
         else if (angle < 110)
-            sunColor = new Color(135, 207, 255);
+            sunColor = new Color(229, 196, 100);
         else if (angle < 120)
-            sunColor = new Color(135, 207, 255);
+            sunColor = new Color(241, 210, 107);
         else if (angle < 130)
-            sunColor = new Color(128, 197, 242);
+            sunColor = new Color(239, 212, 117);
         else if (angle < 140)
-            sunColor = new Color(117, 177, 217);
+            sunColor = new Color(235, 198, 119);
         else if (angle < 150)
-            sunColor = new Color(108, 166, 204);
+            sunColor = new Color(224, 173, 122);
         else if (angle < 160)
-            sunColor = new Color(101, 155, 191);
+            sunColor = new Color(214, 158, 118);
         else if (angle < 170)
-            sunColor = new Color(95, 145, 179);
+            sunColor = new Color(191, 143, 116);
         else if (angle < 180)
-            sunColor = new Color(88, 135, 166);
+            sunColor = new Color(191, 151, 157);
         else if (angle < 190)
-            sunColor = new Color(81, 124, 153);
+            sunColor = new Color(191, 168, 188);
         else if (angle < 200)
-            sunColor = new Color(76, 108, 140);
+            sunColor = new Color(149, 147, 180);
         else if (angle < 210)
-            sunColor = new Color(68, 104, 128);
+            sunColor = new Color(127, 133, 180);
         else if (angle < 220)
-            sunColor = new Color(61, 93, 115);
+            sunColor = new Color(90, 108, 168);
         else if (angle < 230)
-            sunColor = new Color(54, 83, 102);
+            sunColor = new Color(75, 83, 159);
         else if (angle < 240)
-            sunColor = new Color(47, 72, 89);
+            sunColor = new Color(44, 50, 141);
         else if (angle < 250)
-            sunColor = new Color(41, 62, 77);
+            sunColor = new Color(41, 47, 124);
         else if (angle < 260)
-            sunColor = new Color(34, 52, 64);
-        else if (angle < 265)
-            sunColor = new Color(27, 41, 51);
+            sunColor = new Color(36, 43, 131);
         else if (angle < 270)
-            sunColor = new Color(27, 41, 51);
+            sunColor = new Color(35, 43, 141);
         else if (angle < 280)
-            sunColor = new Color(27, 41, 51);
+            sunColor = new Color(31, 60, 131);
         else if (angle < 290)
-            sunColor = new Color(34, 52, 64);
+            sunColor = new Color(38, 83, 134);
         else if (angle < 300)
-            sunColor = new Color(41, 62, 77);
+            sunColor = new Color(36, 89, 136);
         else if (angle < 310)
-            sunColor = new Color(47, 72, 89);
+            sunColor = new Color(57, 100, 148);
         else if (angle < 320)
-            sunColor = new Color(54, 83, 102);
+            sunColor = new Color(60, 105, 156);
         else if (angle < 330)
-            sunColor = new Color(61, 93, 115);
+            sunColor = new Color(67, 111, 168);
         else if (angle < 340)
-            sunColor = new Color(68, 104, 128);
+            sunColor = new Color(86, 137, 178);
         else if (angle < 350)
-            sunColor = new Color(74, 114, 140);
-        else if (angle < 355)
-            sunColor = new Color(81, 124, 153);
+            sunColor = new Color(106, 158, 188);
         else if (angle < 360)
-            sunColor = new Color(88, 135, 166);
+            sunColor = new Color(133, 155, 188);
     }
+    /**
+     * Change Sun's color based on its position
+     */
+//    private void updateSunColor() {
+//        float angle = (float) Math.toDegrees(sunAngle);
+//        if (angle < 10)
+//            sunColor = new Color(95, 145, 179);
+//        else if (angle < 20)
+//            sunColor = new Color(101, 155, 191);
+//        else if (angle < 30)
+//            sunColor = new Color(108, 166, 204);
+//        else if (angle < 40)
+//            sunColor = new Color(115, 176, 217);
+//        else if (angle < 50)
+//            sunColor = new Color(122, 186, 230);
+//        else if (angle < 60)
+//            sunColor = new Color(128, 201, 242);
+//        else if (angle < 70)
+//            sunColor = new Color(135, 207, 255);
+//        else if (angle < 80)
+//            sunColor = new Color(135, 207, 255);
+//        else if (angle < 90)
+//            sunColor = new Color(135, 207, 255);
+//        else if (angle < 100)
+//            sunColor = new Color(135, 209, 255);
+//        else if (angle < 110)
+//            sunColor = new Color(135, 207, 255);
+//        else if (angle < 120)
+//            sunColor = new Color(135, 207, 255);
+//        else if (angle < 130)
+//            sunColor = new Color(128, 197, 242);
+//        else if (angle < 140)
+//            sunColor = new Color(117, 177, 217);
+//        else if (angle < 150)
+//            sunColor = new Color(108, 166, 204);
+//        else if (angle < 160)
+//            sunColor = new Color(101, 155, 191);
+//        else if (angle < 170)
+//            sunColor = new Color(95, 145, 179);
+//        else if (angle < 180)
+//            sunColor = new Color(88, 135, 166);
+//        else if (angle < 190)
+//            sunColor = new Color(81, 124, 153);
+//        else if (angle < 200)
+//            sunColor = new Color(76, 108, 140);
+//        else if (angle < 210)
+//            sunColor = new Color(68, 104, 128);
+//        else if (angle < 220)
+//            sunColor = new Color(61, 93, 115);
+//        else if (angle < 230)
+//            sunColor = new Color(54, 83, 102);
+//        else if (angle < 240)
+//            sunColor = new Color(47, 72, 89);
+//        else if (angle < 250)
+//            sunColor = new Color(41, 62, 77);
+//        else if (angle < 260)
+//            sunColor = new Color(34, 52, 64);
+//        else if (angle < 265)
+//            sunColor = new Color(27, 41, 51);
+//        else if (angle < 270)
+//            sunColor = new Color(27, 41, 51);
+//        else if (angle < 280)
+//            sunColor = new Color(27, 41, 51);
+//        else if (angle < 290)
+//            sunColor = new Color(34, 52, 64);
+//        else if (angle < 300)
+//            sunColor = new Color(41, 62, 77);
+//        else if (angle < 310)
+//            sunColor = new Color(47, 72, 89);
+//        else if (angle < 320)
+//            sunColor = new Color(54, 83, 102);
+//        else if (angle < 330)
+//            sunColor = new Color(61, 93, 115);
+//        else if (angle < 340)
+//            sunColor = new Color(68, 104, 128);
+//        else if (angle < 350)
+//            sunColor = new Color(74, 114, 140);
+//        else if (angle < 355)
+//            sunColor = new Color(81, 124, 153);
+//        else if (angle < 360)
+//            sunColor = new Color(88, 135, 166);
+//    }
 
     /**
      * Calculate and update the next position of the sun, using circle geometry
