@@ -244,6 +244,10 @@ public class Road {
                 indices.addAll(Arrays.asList(index0, index2, index1));
                 normals.add(ROAD_NORMAL);
                 normals.add(ROAD_NORMAL);
+                normals.add(ROAD_NORMAL);
+                normals.add(ROAD_NORMAL);
+                normals.add(ROAD_NORMAL);
+                normals.add(ROAD_NORMAL);
             }
         }
 
