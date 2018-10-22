@@ -103,9 +103,14 @@ public class Terrain {
         // TODO: Implement this
         int lowerBoundX = (int) Math.floor(x);
         int upperBoundX = lowerBoundX + 1; // can't do ceil in the case when x,z is a whole number
+        if (upperBoundX == width) {
+            upperBoundX -= 1;
+        }
         int lowerBoundZ = (int) Math.floor(z);
         int upperBoundZ = lowerBoundZ + 1;
-
+        if (upperBoundZ == depth) {
+            upperBoundZ -= 1;
+        }
         Point3D p0 = new Point3D(upperBoundX, (float) getGridAltitude(upperBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p1 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, lowerBoundZ), lowerBoundZ);
         Point3D p2 = new Point3D(lowerBoundX, (float) getGridAltitude(lowerBoundX, upperBoundZ), upperBoundZ);
